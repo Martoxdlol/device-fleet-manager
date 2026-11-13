@@ -6,6 +6,7 @@ pub mod db;
 pub mod error;
 pub mod keys;
 pub mod model;
+pub mod oidc;
 pub mod page;
 pub mod repo;
 pub mod telemetry;

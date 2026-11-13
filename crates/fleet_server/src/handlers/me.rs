@@ -2,12 +2,16 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use fleet_lib::auth::{hash_password, verify_password};
 use fleet_lib::model::User;
+use fleet_lib::oidc::OidcKind;
+use fleet_lib::repo::accounts::{LinkedIdentity, Unlink};
 use serde::Deserialize;
 use utoipa::ToSchema;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 
-use super::common::{ApiError, ApiResult, Json, Validator, bad_request, not_found, repo_error};
+use super::common::{
+    ApiError, ApiResult, Json, Path, Validator, bad_request, conflict, not_found, repo_error,
+};
 use super::scope::Principal;
 use crate::AppState;
 use crate::messages::Message as M;
@@ -16,6 +20,8 @@ pub fn router() -> OpenApiRouter<AppState> {
     OpenApiRouter::new()
         .routes(routes!(me, update_me))
         .routes(routes!(change_password))
+        .routes(routes!(list_identities))
+        .routes(routes!(unlink_identity))
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
@@ -118,4 +124,53 @@ async fn change_password(
         .await
         .map_err(repo_error)?;
     Ok(StatusCode::NO_CONTENT)
+}
+
+#[utoipa::path(
+    get, path = "/me/identities", tag = "me",
+    security(("bearer" = [])),
+    responses((status = OK, body = Vec<LinkedIdentity>), (status = UNAUTHORIZED, body = ApiError))
+)]
+async fn list_identities(
+    State(state): State<AppState>,
+    principal: Principal,
+) -> ApiResult<Json<Vec<LinkedIdentity>>> {
+    state
+        .ctx
+        .repos
+        .accounts
+        .identities(principal.user_id())
+        .await
+        .map(Json)
+        .map_err(repo_error)
+}
+
+#[utoipa::path(
+    delete, path = "/me/identities/{provider}", tag = "me",
+    security(("bearer" = [])),
+    params(("provider" = inline(OidcKind), Path)),
+    responses(
+        (status = NO_CONTENT),
+        (status = NOT_FOUND, body = ApiError),
+        (status = CONFLICT, body = ApiError),
+    )
+)]
+async fn unlink_identity(
+    State(state): State<AppState>,
+    principal: Principal,
+    Path(provider): Path<String>,
+) -> ApiResult<StatusCode> {
+    let kind = OidcKind::parse(&provider).ok_or_else(|| not_found(M::IdentityNotFound))?;
+    match state
+        .ctx
+        .repos
+        .accounts
+        .unlink(principal.user_id(), kind)
+        .await
+        .map_err(repo_error)?
+    {
+        Unlink::Done => Ok(StatusCode::NO_CONTENT),
+        Unlink::NotFound => Err(not_found(M::IdentityNotFound)),
+        Unlink::LastSignIn => Err(conflict(M::LastSignIn)),
+    }
 }

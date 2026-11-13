@@ -64,6 +64,13 @@ pub enum Message {
     AgentKeyInUse,
     NoAgentKey,
     GrantSubject,
+    CodeChallengeFormat,
+    ReturnToFormat,
+    ProviderNotConfigured,
+    ProviderUnavailable,
+    SignInCodeInvalid,
+    IdentityNotFound,
+    LastSignIn,
 }
 
 impl Localize for Message {
@@ -343,6 +350,41 @@ impl Localize for Message {
                 lang,
                 "Give exactly one of user_id and group_id",
                 "Indica exactamente uno de user_id y group_id"
+            ),
+            CodeChallengeFormat => tr!(
+                lang,
+                "Must be an S256 PKCE challenge",
+                "Debe ser un desafío PKCE S256"
+            ),
+            ReturnToFormat => tr!(
+                lang,
+                "Must be a path on this site",
+                "Debe ser una ruta de este sitio"
+            ),
+            ProviderNotConfigured => tr!(
+                lang,
+                "This sign-in provider is not configured",
+                "Este proveedor de inicio de sesión no está configurado"
+            ),
+            ProviderUnavailable => tr!(
+                lang,
+                "The sign-in provider did not answer; try again",
+                "El proveedor de inicio de sesión no respondió; vuelve a intentarlo"
+            ),
+            SignInCodeInvalid => tr!(
+                lang,
+                "This sign-in is not valid anymore; sign in again",
+                "Este inicio de sesión ya no es válido; vuelve a iniciar sesión"
+            ),
+            IdentityNotFound => tr!(
+                lang,
+                "This sign-in method is not linked",
+                "Este método de inicio de sesión no está vinculado"
+            ),
+            LastSignIn => tr!(
+                lang,
+                "Keep at least one way to sign in",
+                "Conserva al menos una forma de iniciar sesión"
             ),
         }
     }

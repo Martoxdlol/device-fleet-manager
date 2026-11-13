@@ -8,9 +8,11 @@ use crate::config::Bootstrap;
 use crate::error::RepoResult;
 use crate::keys::MasterKey;
 use crate::model::{Organization, User, slugify};
+use crate::oidc::{OidcKind, ProviderIdentity};
 use crate::repo::orgs::insert_org;
 
-const USER: &str = "id, email, name, instance_admin, created_at";
+const USER: &str =
+    "id, email, name, instance_admin, password_hash IS NOT NULL AS has_password, created_at";
 const SETUP_LOCK: i64 = 0x666c_6565_7401;
 
 pub enum BootstrapOutcome {
@@ -421,4 +423,175 @@ pub(crate) async fn try_insert_user(
     .bind(password_hash)
     .fetch_optional(conn)
     .await?)
+}
+
+pub enum OidcOutcome {
+    SignedIn(User),
+    NoAccount,
+    EmailTaken,
+    EmailUnverified,
+    IdentityTaken,
+    ProviderAlreadyLinked,
+    InvitationInvalid,
+}
+
+pub struct OidcLogin<'a> {
+    pub provider: OidcKind,
+    pub identity: &'a ProviderIdentity,
+    pub link_user: Option<Uuid>,
+    pub invitation: Option<&'a str>,
+    pub open_signup: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema, sqlx::FromRow)]
+pub struct LinkedIdentity {
+    pub provider: String,
+    pub email: Option<String>,
+    #[serde(with = "time::serde::rfc3339")]
+    pub created_at: time::OffsetDateTime,
+}
+
+pub enum Unlink {
+    Done,
+    NotFound,
+    LastSignIn,
+}
+
+impl Accounts {
+    pub async fn oidc_login(&self, login: OidcLogin<'_>) -> RepoResult<OidcOutcome> {
+        let provider = login.provider.as_str();
+        let identity = login.identity;
+        let mut tx = self.pool.begin().await?;
+        let known = sqlx::query_scalar::<_, Uuid>(
+            "UPDATE user_identities SET email = COALESCE($3, email) \
+             WHERE provider = $1 AND subject = $2 RETURNING user_id",
+        )
+        .bind(provider)
+        .bind(&identity.subject)
+        .bind(&identity.email)
+        .fetch_optional(&mut *tx)
+        .await?;
+        let user_id = match (known, login.link_user) {
+            (Some(owner), Some(linking)) if owner != linking => {
+                return Ok(OidcOutcome::IdentityTaken);
+            }
+            (Some(owner), _) => {
+                if let Some(token) = login.invitation {
+                    crate::repo::orgs::accept(&mut tx, token, owner).await?;
+                }
+                owner
+            }
+            (None, Some(linking)) => {
+                let linked = sqlx::query(
+                    "INSERT INTO user_identities (provider, subject, user_id, email) \
+                     VALUES ($1, $2, $3, $4) ON CONFLICT (user_id, provider) DO NOTHING",
+                )
+                .bind(provider)
+                .bind(&identity.subject)
+                .bind(linking)
+                .bind(&identity.email)
+                .execute(&mut *tx)
+                .await?
+                .rows_affected();
+                if linked == 0 {
+                    return Ok(OidcOutcome::ProviderAlreadyLinked);
+                }
+                linking
+            }
+            (None, None) => {
+                let email = if let Some(token) = login.invitation {
+                    let email = sqlx::query_scalar::<_, String>(
+                        "SELECT email FROM org_invitations \
+                         WHERE token_hash = $1 AND expires_at > now() FOR UPDATE",
+                    )
+                    .bind(hash(token))
+                    .fetch_optional(&mut *tx)
+                    .await?;
+                    match email {
+                        Some(email) => email,
+                        None => return Ok(OidcOutcome::InvitationInvalid),
+                    }
+                } else if login.open_signup {
+                    match &identity.email {
+                        Some(email)
+                            if identity.email_verified
+                                || !login.provider.trusts_verified_email() =>
+                        {
+                            email.clone()
+                        }
+                        _ => return Ok(OidcOutcome::EmailUnverified),
+                    }
+                } else {
+                    return Ok(OidcOutcome::NoAccount);
+                };
+                let name = identity
+                    .name
+                    .clone()
+                    .filter(|name| !name.trim().is_empty())
+                    .unwrap_or_else(|| email.split('@').next().unwrap_or(&email).to_string());
+                let Some(user) = try_insert_user(&mut tx, &email, &name, None).await? else {
+                    return Ok(OidcOutcome::EmailTaken);
+                };
+                sqlx::query(
+                    "INSERT INTO user_identities (provider, subject, user_id, email) \
+                     VALUES ($1, $2, $3, $4)",
+                )
+                .bind(provider)
+                .bind(&identity.subject)
+                .bind(user.id)
+                .bind(&identity.email)
+                .execute(&mut *tx)
+                .await?;
+                if let Some(token) = login.invitation {
+                    crate::repo::orgs::accept(&mut tx, token, user.id).await?;
+                }
+                user.id
+            }
+        };
+        let user = sqlx::query_as::<_, User>(AssertSqlSafe(format!(
+            "SELECT {USER} FROM users WHERE id = $1"
+        )))
+        .bind(user_id)
+        .fetch_one(&mut *tx)
+        .await?;
+        tx.commit().await?;
+        Ok(OidcOutcome::SignedIn(user))
+    }
+
+    pub async fn identities(&self, user_id: Uuid) -> RepoResult<Vec<LinkedIdentity>> {
+        Ok(sqlx::query_as::<_, LinkedIdentity>(
+            "SELECT provider, email, created_at FROM user_identities \
+             WHERE user_id = $1 ORDER BY provider",
+        )
+        .bind(user_id)
+        .fetch_all(&self.pool)
+        .await?)
+    }
+
+    pub async fn unlink(&self, user_id: Uuid, provider: OidcKind) -> RepoResult<Unlink> {
+        let mut tx = self.pool.begin().await?;
+        let (found, others) = sqlx::query_as::<_, (bool, bool)>(
+            "SELECT EXISTS (SELECT 1 FROM user_identities WHERE user_id = $1 AND provider = $2), \
+                    EXISTS (SELECT 1 FROM users WHERE id = $1 AND password_hash IS NOT NULL) \
+                    OR EXISTS (SELECT 1 FROM user_identities WHERE user_id = $1 AND provider <> $2) \
+             FROM users WHERE id = $1 FOR UPDATE",
+        )
+        .bind(user_id)
+        .bind(provider.as_str())
+        .fetch_one(&mut *tx)
+        .await?;
+        if !found {
+            return Ok(Unlink::NotFound);
+        }
+        if !others {
+            return Ok(Unlink::LastSignIn);
+        }
+        sqlx::query("DELETE FROM user_identities WHERE user_id = $1 AND provider = $2")
+            .bind(user_id)
+            .bind(provider.as_str())
+            .execute(&mut *tx)
+            .await?;
+        tx.commit().await?;
+        Ok(Unlink::Done)
+    }
 }

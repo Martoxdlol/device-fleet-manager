@@ -62,6 +62,11 @@ export type CreatedInvitation = {
     token: string;
 };
 
+export type ExchangeRequest = {
+    code: string;
+    code_verifier: string;
+};
+
 export type FieldError = {
     code: string;
     field: string;
@@ -134,6 +139,12 @@ export type InvitedSignupRequest = {
 
 export type KeyName = {
     name: string;
+};
+
+export type LinkedIdentity = {
+    created_at: string;
+    email?: string | null;
+    provider: string;
 };
 
 export type LoginRequest = {
@@ -246,6 +257,7 @@ export type PageUser = {
     items: Array<{
         created_at: string;
         email: string;
+        has_password: boolean;
         id: string;
         instance_admin: boolean;
         name: string;
@@ -264,7 +276,7 @@ export type PasswordResetLink = {
     token: string;
 };
 
-export type Provider = 'password';
+export type Provider = 'password' | 'google' | 'microsoft';
 
 export type ResetPasswordRequest = {
     password: string;
@@ -304,6 +316,16 @@ export type SignupRequest = {
     password: string;
 };
 
+export type StartOidc = {
+    code_challenge: string;
+    invitation?: string | null;
+    return_to?: string | null;
+};
+
+export type StartedOidc = {
+    url: string;
+};
+
 export type UpdateFleet = {
     agent_key_id?: string | null;
     name?: string | null;
@@ -334,6 +356,7 @@ export type UpdateUser = {
 export type User = {
     created_at: string;
     email: string;
+    has_password: boolean;
     id: string;
     instance_admin: boolean;
     name: string;
@@ -411,6 +434,25 @@ export type CreatePasswordResetResponses = {
 
 export type CreatePasswordResetResponse = CreatePasswordResetResponses[keyof CreatePasswordResetResponses];
 
+export type ExchangeCodeData = {
+    body: ExchangeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/exchange';
+};
+
+export type ExchangeCodeErrors = {
+    400: ApiError;
+};
+
+export type ExchangeCodeError = ExchangeCodeErrors[keyof ExchangeCodeErrors];
+
+export type ExchangeCodeResponses = {
+    200: Session;
+};
+
+export type ExchangeCodeResponse = ExchangeCodeResponses[keyof ExchangeCodeResponses];
+
 export type LoginData = {
     body: LoginRequest;
     path?: never;
@@ -448,6 +490,41 @@ export type LogoutResponses = {
 };
 
 export type LogoutResponse = LogoutResponses[keyof LogoutResponses];
+
+export type OidcCallbackData = {
+    body?: never;
+    path: {
+        provider: 'google' | 'microsoft';
+    };
+    query?: {
+        code?: string;
+        state?: string;
+        error?: string;
+    };
+    url: '/api/v1/auth/oidc/{provider}/callback';
+};
+
+export type StartOidcData = {
+    body: StartOidc;
+    path: {
+        provider: 'google' | 'microsoft';
+    };
+    query?: never;
+    url: '/api/v1/auth/oidc/{provider}/start';
+};
+
+export type StartOidcErrors = {
+    400: ApiError;
+    404: ApiError;
+};
+
+export type StartOidcError = StartOidcErrors[keyof StartOidcErrors];
+
+export type StartOidcResponses = {
+    200: StartedOidc;
+};
+
+export type StartOidcResponse = StartOidcResponses[keyof StartOidcResponses];
 
 export type ResetPasswordData = {
     body: ResetPasswordRequest;
@@ -768,6 +845,47 @@ export type UpdateMeResponses = {
 };
 
 export type UpdateMeResponse = UpdateMeResponses[keyof UpdateMeResponses];
+
+export type ListIdentitiesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me/identities';
+};
+
+export type ListIdentitiesErrors = {
+    401: ApiError;
+};
+
+export type ListIdentitiesError = ListIdentitiesErrors[keyof ListIdentitiesErrors];
+
+export type ListIdentitiesResponses = {
+    200: Array<LinkedIdentity>;
+};
+
+export type ListIdentitiesResponse = ListIdentitiesResponses[keyof ListIdentitiesResponses];
+
+export type UnlinkIdentityData = {
+    body?: never;
+    path: {
+        provider: 'google' | 'microsoft';
+    };
+    query?: never;
+    url: '/api/v1/me/identities/{provider}';
+};
+
+export type UnlinkIdentityErrors = {
+    404: ApiError;
+    409: ApiError;
+};
+
+export type UnlinkIdentityError = UnlinkIdentityErrors[keyof UnlinkIdentityErrors];
+
+export type UnlinkIdentityResponses = {
+    204: void;
+};
+
+export type UnlinkIdentityResponse = UnlinkIdentityResponses[keyof UnlinkIdentityResponses];
 
 export type ChangePasswordData = {
     body: ChangePassword;

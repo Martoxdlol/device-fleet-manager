@@ -3,8 +3,8 @@
 import { type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { acceptInvitation, addGroupMembers, changePassword, createFleet, createGrant, createGroup, createInvitation, createKey, createOrg, createPasswordReset, deleteFleet, deleteGrant, deleteGroup, deleteKey, deleteOrg, getFleet, getOrg, health, instance, listFleets, listGrants, listGroupMembers, listGroups, listInvitations, listKeys, listMembers, listOrgs, listUsers, login, logout, me, type Options, previewInvitation, removeGroupMember, removeMember, renameGroup, renameKey, resetPassword, resolve, revokeInvitation, setup, signup, signupInvited, updateFleet, updateGrant, updateMe, updateMember, updateOrg, updateUser } from '../sdk.gen';
-import type { AcceptInvitationData, AcceptInvitationError, AcceptInvitationResponse, AddGroupMembersData, AddGroupMembersError, AddGroupMembersResponse, ChangePasswordData, ChangePasswordError, ChangePasswordResponse, CreateFleetData, CreateFleetError, CreateFleetResponse, CreateGrantData, CreateGrantError, CreateGrantResponse, CreateGroupData, CreateGroupError, CreateGroupResponse, CreateInvitationData, CreateInvitationError, CreateInvitationResponse, CreateKeyData, CreateKeyError, CreateKeyResponse, CreateOrgData, CreateOrgError, CreateOrgResponse, CreatePasswordResetData, CreatePasswordResetError, CreatePasswordResetResponse, DeleteFleetData, DeleteFleetError, DeleteFleetResponse, DeleteGrantData, DeleteGrantError, DeleteGrantResponse, DeleteGroupData, DeleteGroupError, DeleteGroupResponse, DeleteKeyData, DeleteKeyError, DeleteKeyResponse, DeleteOrgData, DeleteOrgError, DeleteOrgResponse, GetFleetData, GetOrgData, HealthData, InstanceData, ListFleetsData, ListFleetsError, ListFleetsResponse, ListGrantsData, ListGrantsError, ListGrantsResponse, ListGroupMembersData, ListGroupMembersError, ListGroupMembersResponse, ListGroupsData, ListGroupsError, ListGroupsResponse, ListInvitationsData, ListInvitationsError, ListInvitationsResponse, ListKeysData, ListKeysError, ListKeysResponse, ListMembersData, ListMembersError, ListMembersResponse, ListOrgsData, ListOrgsError, ListOrgsResponse, ListUsersData, ListUsersError, ListUsersResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, LogoutResponse, MeData, PreviewInvitationData, RemoveGroupMemberData, RemoveGroupMemberError, RemoveGroupMemberResponse, RemoveMemberData, RemoveMemberError, RemoveMemberResponse, RenameGroupData, RenameGroupError, RenameGroupResponse, RenameKeyData, RenameKeyError, RenameKeyResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, ResolveData, RevokeInvitationData, RevokeInvitationError, RevokeInvitationResponse, SetupData, SetupError, SetupResponse2, SignupData, SignupError, SignupInvitedData, SignupInvitedError, SignupInvitedResponse, SignupResponse, UpdateFleetData, UpdateFleetError, UpdateFleetResponse, UpdateGrantData, UpdateGrantError, UpdateGrantResponse, UpdateMeData, UpdateMeError, UpdateMemberData, UpdateMemberError, UpdateMemberResponse, UpdateMeResponse, UpdateOrgData, UpdateOrgError, UpdateOrgResponse, UpdateUserData, UpdateUserError, UpdateUserResponse } from '../types.gen';
+import { acceptInvitation, addGroupMembers, changePassword, createFleet, createGrant, createGroup, createInvitation, createKey, createOrg, createPasswordReset, deleteFleet, deleteGrant, deleteGroup, deleteKey, deleteOrg, exchangeCode, getFleet, getOrg, health, instance, listFleets, listGrants, listGroupMembers, listGroups, listIdentities, listInvitations, listKeys, listMembers, listOrgs, listUsers, login, logout, me, oidcCallback, type Options, previewInvitation, removeGroupMember, removeMember, renameGroup, renameKey, resetPassword, resolve, revokeInvitation, setup, signup, signupInvited, startOidc, unlinkIdentity, updateFleet, updateGrant, updateMe, updateMember, updateOrg, updateUser } from '../sdk.gen';
+import type { AcceptInvitationData, AcceptInvitationError, AcceptInvitationResponse, AddGroupMembersData, AddGroupMembersError, AddGroupMembersResponse, ChangePasswordData, ChangePasswordError, ChangePasswordResponse, CreateFleetData, CreateFleetError, CreateFleetResponse, CreateGrantData, CreateGrantError, CreateGrantResponse, CreateGroupData, CreateGroupError, CreateGroupResponse, CreateInvitationData, CreateInvitationError, CreateInvitationResponse, CreateKeyData, CreateKeyError, CreateKeyResponse, CreateOrgData, CreateOrgError, CreateOrgResponse, CreatePasswordResetData, CreatePasswordResetError, CreatePasswordResetResponse, DeleteFleetData, DeleteFleetError, DeleteFleetResponse, DeleteGrantData, DeleteGrantError, DeleteGrantResponse, DeleteGroupData, DeleteGroupError, DeleteGroupResponse, DeleteKeyData, DeleteKeyError, DeleteKeyResponse, DeleteOrgData, DeleteOrgError, DeleteOrgResponse, ExchangeCodeData, ExchangeCodeError, ExchangeCodeResponse, GetFleetData, GetOrgData, HealthData, InstanceData, ListFleetsData, ListFleetsError, ListFleetsResponse, ListGrantsData, ListGrantsError, ListGrantsResponse, ListGroupMembersData, ListGroupMembersError, ListGroupMembersResponse, ListGroupsData, ListGroupsError, ListGroupsResponse, ListIdentitiesData, ListInvitationsData, ListInvitationsError, ListInvitationsResponse, ListKeysData, ListKeysError, ListKeysResponse, ListMembersData, ListMembersError, ListMembersResponse, ListOrgsData, ListOrgsError, ListOrgsResponse, ListUsersData, ListUsersError, ListUsersResponse, LoginData, LoginError, LoginResponse, LogoutData, LogoutError, LogoutResponse, MeData, OidcCallbackData, PreviewInvitationData, RemoveGroupMemberData, RemoveGroupMemberError, RemoveGroupMemberResponse, RemoveMemberData, RemoveMemberError, RemoveMemberResponse, RenameGroupData, RenameGroupError, RenameGroupResponse, RenameKeyData, RenameKeyError, RenameKeyResponse, ResetPasswordData, ResetPasswordError, ResetPasswordResponse, ResolveData, RevokeInvitationData, RevokeInvitationError, RevokeInvitationResponse, SetupData, SetupError, SetupResponse2, SignupData, SignupError, SignupInvitedData, SignupInvitedError, SignupInvitedResponse, SignupResponse, StartOidcData, StartOidcError, StartOidcResponse, UnlinkIdentityData, UnlinkIdentityError, UnlinkIdentityResponse, UpdateFleetData, UpdateFleetError, UpdateFleetResponse, UpdateGrantData, UpdateGrantError, UpdateGrantResponse, UpdateMeData, UpdateMeError, UpdateMemberData, UpdateMemberError, UpdateMemberResponse, UpdateMeResponse, UpdateOrgData, UpdateOrgError, UpdateOrgResponse, UpdateUserData, UpdateUserError, UpdateUserResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -143,6 +143,20 @@ export const createPasswordResetMutation = (options?: Partial<Options<CreatePass
     return mutationOptions;
 };
 
+export const exchangeCodeMutation = (options?: Partial<Options<ExchangeCodeData>>): UseMutationOptions<ExchangeCodeResponse, ExchangeCodeError, Options<ExchangeCodeData>> => {
+    const mutationOptions: UseMutationOptions<ExchangeCodeResponse, ExchangeCodeError, Options<ExchangeCodeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await exchangeCode({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const loginMutation = (options?: Partial<Options<LoginData>>): UseMutationOptions<LoginResponse, LoginError, Options<LoginData>> => {
     const mutationOptions: UseMutationOptions<LoginResponse, LoginError, Options<LoginData>> = {
         mutationFn: async (fnOptions) => {
@@ -161,6 +175,37 @@ export const logoutMutation = (options?: Partial<Options<LogoutData>>): UseMutat
     const mutationOptions: UseMutationOptions<LogoutResponse, LogoutError, Options<LogoutData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await logout({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const oidcCallbackQueryKey = (options: Options<OidcCallbackData>) => createQueryKey('oidcCallback', options);
+
+export const oidcCallbackOptions = (options: Options<OidcCallbackData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await oidcCallback({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: oidcCallbackQueryKey(options)
+    });
+};
+
+export const startOidcMutation = (options?: Partial<Options<StartOidcData>>): UseMutationOptions<StartOidcResponse, StartOidcError, Options<StartOidcData>> => {
+    const mutationOptions: UseMutationOptions<StartOidcResponse, StartOidcError, Options<StartOidcData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await startOidc({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -412,6 +457,37 @@ export const updateMeMutation = (options?: Partial<Options<UpdateMeData>>): UseM
     const mutationOptions: UseMutationOptions<UpdateMeResponse, UpdateMeError, Options<UpdateMeData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await updateMe({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const listIdentitiesQueryKey = (options?: Options<ListIdentitiesData>) => createQueryKey('listIdentities', options);
+
+export const listIdentitiesOptions = (options?: Options<ListIdentitiesData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await listIdentities({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: listIdentitiesQueryKey(options)
+    });
+};
+
+export const unlinkIdentityMutation = (options?: Partial<Options<UnlinkIdentityData>>): UseMutationOptions<UnlinkIdentityResponse, UnlinkIdentityError, Options<UnlinkIdentityData>> => {
+    const mutationOptions: UseMutationOptions<UnlinkIdentityResponse, UnlinkIdentityError, Options<UnlinkIdentityData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await unlinkIdentity({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

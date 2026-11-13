@@ -29,6 +29,8 @@ pub fn router() -> OpenApiRouter<AppState> {
 #[serde(rename_all = "lowercase")]
 pub enum Provider {
     Password,
+    Google,
+    Microsoft,
 }
 
 #[derive(Debug, Serialize, ToSchema)]
@@ -106,7 +108,12 @@ async fn instance(State(state): State<AppState>) -> ApiResult<Json<InstanceInfo>
     Ok(Json(InstanceInfo {
         setup_required,
         signup: state.ctx.signup,
-        providers: vec![Provider::Password],
+        providers: std::iter::once(Provider::Password)
+            .chain(state.ctx.oidc.kinds().into_iter().map(|kind| match kind {
+                fleet_lib::oidc::OidcKind::Google => Provider::Google,
+                fleet_lib::oidc::OidcKind::Microsoft => Provider::Microsoft,
+            }))
+            .collect(),
     }))
 }
 

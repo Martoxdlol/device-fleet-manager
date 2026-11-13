@@ -6,6 +6,7 @@ pub mod fleets;
 pub mod groups;
 pub mod invitations;
 pub mod me;
+pub mod oidc;
 pub mod orgs;
 pub mod scope;
 
@@ -16,6 +17,7 @@ use crate::AppState;
 pub fn router() -> OpenApiRouter<AppState> {
     OpenApiRouter::new()
         .merge(auth::router())
+        .merge(oidc::router())
         .merge(me::router())
         .merge(orgs::router())
         .merge(invitations::router())

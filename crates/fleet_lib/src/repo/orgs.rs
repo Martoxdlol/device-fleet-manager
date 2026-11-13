@@ -318,7 +318,11 @@ impl Orgs {
     }
 }
 
-async fn accept(conn: &mut PgConnection, token: &str, user: Uuid) -> RepoResult<Acceptance> {
+pub(crate) async fn accept(
+    conn: &mut PgConnection,
+    token: &str,
+    user: Uuid,
+) -> RepoResult<Acceptance> {
     #[derive(sqlx::FromRow)]
     struct Row {
         email_matches: bool,

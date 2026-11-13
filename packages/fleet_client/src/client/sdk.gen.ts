@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, AddGroupMembersData, AddGroupMembersErrors, AddGroupMembersResponses, ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateFleetData, CreateFleetErrors, CreateFleetResponses, CreateGrantData, CreateGrantErrors, CreateGrantResponses, CreateGroupData, CreateGroupErrors, CreateGroupResponses, CreateInvitationData, CreateInvitationErrors, CreateInvitationResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreateOrgData, CreateOrgErrors, CreateOrgResponses, CreatePasswordResetData, CreatePasswordResetErrors, CreatePasswordResetResponses, DeleteFleetData, DeleteFleetErrors, DeleteFleetResponses, DeleteGrantData, DeleteGrantErrors, DeleteGrantResponses, DeleteGroupData, DeleteGroupErrors, DeleteGroupResponses, DeleteKeyData, DeleteKeyErrors, DeleteKeyResponses, DeleteOrgData, DeleteOrgErrors, DeleteOrgResponses, GetFleetData, GetFleetErrors, GetFleetResponses, GetOrgData, GetOrgErrors, GetOrgResponses, HealthData, HealthErrors, HealthResponses, InstanceData, InstanceResponses, ListFleetsData, ListFleetsErrors, ListFleetsResponses, ListGrantsData, ListGrantsErrors, ListGrantsResponses, ListGroupMembersData, ListGroupMembersErrors, ListGroupMembersResponses, ListGroupsData, ListGroupsErrors, ListGroupsResponses, ListInvitationsData, ListInvitationsErrors, ListInvitationsResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, MeData, MeErrors, MeResponses, PreviewInvitationData, PreviewInvitationErrors, PreviewInvitationResponses, RemoveGroupMemberData, RemoveGroupMemberErrors, RemoveGroupMemberResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RenameGroupData, RenameGroupErrors, RenameGroupResponses, RenameKeyData, RenameKeyErrors, RenameKeyResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, ResolveData, ResolveErrors, ResolveResponses, RevokeInvitationData, RevokeInvitationErrors, RevokeInvitationResponses, SetupData, SetupErrors, SetupResponses, SignupData, SignupErrors, SignupInvitedData, SignupInvitedErrors, SignupInvitedResponses, SignupResponses, UpdateFleetData, UpdateFleetErrors, UpdateFleetResponses, UpdateGrantData, UpdateGrantErrors, UpdateGrantResponses, UpdateMeData, UpdateMeErrors, UpdateMemberData, UpdateMemberErrors, UpdateMemberResponses, UpdateMeResponses, UpdateOrgData, UpdateOrgErrors, UpdateOrgResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, AddGroupMembersData, AddGroupMembersErrors, AddGroupMembersResponses, ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateFleetData, CreateFleetErrors, CreateFleetResponses, CreateGrantData, CreateGrantErrors, CreateGrantResponses, CreateGroupData, CreateGroupErrors, CreateGroupResponses, CreateInvitationData, CreateInvitationErrors, CreateInvitationResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreateOrgData, CreateOrgErrors, CreateOrgResponses, CreatePasswordResetData, CreatePasswordResetErrors, CreatePasswordResetResponses, DeleteFleetData, DeleteFleetErrors, DeleteFleetResponses, DeleteGrantData, DeleteGrantErrors, DeleteGrantResponses, DeleteGroupData, DeleteGroupErrors, DeleteGroupResponses, DeleteKeyData, DeleteKeyErrors, DeleteKeyResponses, DeleteOrgData, DeleteOrgErrors, DeleteOrgResponses, ExchangeCodeData, ExchangeCodeErrors, ExchangeCodeResponses, GetFleetData, GetFleetErrors, GetFleetResponses, GetOrgData, GetOrgErrors, GetOrgResponses, HealthData, HealthErrors, HealthResponses, InstanceData, InstanceResponses, ListFleetsData, ListFleetsErrors, ListFleetsResponses, ListGrantsData, ListGrantsErrors, ListGrantsResponses, ListGroupMembersData, ListGroupMembersErrors, ListGroupMembersResponses, ListGroupsData, ListGroupsErrors, ListGroupsResponses, ListIdentitiesData, ListIdentitiesErrors, ListIdentitiesResponses, ListInvitationsData, ListInvitationsErrors, ListInvitationsResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, MeData, MeErrors, MeResponses, OidcCallbackData, PreviewInvitationData, PreviewInvitationErrors, PreviewInvitationResponses, RemoveGroupMemberData, RemoveGroupMemberErrors, RemoveGroupMemberResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RenameGroupData, RenameGroupErrors, RenameGroupResponses, RenameKeyData, RenameKeyErrors, RenameKeyResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, ResolveData, ResolveErrors, ResolveResponses, RevokeInvitationData, RevokeInvitationErrors, RevokeInvitationResponses, SetupData, SetupErrors, SetupResponses, SignupData, SignupErrors, SignupInvitedData, SignupInvitedErrors, SignupInvitedResponses, SignupResponses, StartOidcData, StartOidcErrors, StartOidcResponses, UnlinkIdentityData, UnlinkIdentityErrors, UnlinkIdentityResponses, UpdateFleetData, UpdateFleetErrors, UpdateFleetResponses, UpdateGrantData, UpdateGrantErrors, UpdateGrantResponses, UpdateMeData, UpdateMeErrors, UpdateMemberData, UpdateMemberErrors, UpdateMemberResponses, UpdateMeResponses, UpdateOrgData, UpdateOrgErrors, UpdateOrgResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -61,6 +61,17 @@ export const createPasswordReset = <ThrowOnError extends boolean = false>(option
     });
 };
 
+export const exchangeCode = <ThrowOnError extends boolean = false>(options: Options<ExchangeCodeData, ThrowOnError>) => {
+    return (options.client ?? client).post<ExchangeCodeResponses, ExchangeCodeErrors, ThrowOnError>({
+        url: '/api/v1/auth/exchange',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
 export const login = <ThrowOnError extends boolean = false>(options: Options<LoginData, ThrowOnError>) => {
     return (options.client ?? client).post<LoginResponses, LoginErrors, ThrowOnError>({
         url: '/api/v1/auth/login',
@@ -82,6 +93,24 @@ export const logout = <ThrowOnError extends boolean = false>(options?: Options<L
         ],
         url: '/api/v1/auth/logout',
         ...options
+    });
+};
+
+export const oidcCallback = <ThrowOnError extends boolean = false>(options: Options<OidcCallbackData, ThrowOnError>) => {
+    return (options.client ?? client).get<unknown, unknown, ThrowOnError>({
+        url: '/api/v1/auth/oidc/{provider}/callback',
+        ...options
+    });
+};
+
+export const startOidc = <ThrowOnError extends boolean = false>(options: Options<StartOidcData, ThrowOnError>) => {
+    return (options.client ?? client).post<StartOidcResponses, StartOidcErrors, ThrowOnError>({
+        url: '/api/v1/auth/oidc/{provider}/start',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -275,6 +304,32 @@ export const updateMe = <ThrowOnError extends boolean = false>(options: Options<
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+export const listIdentities = <ThrowOnError extends boolean = false>(options?: Options<ListIdentitiesData, ThrowOnError>) => {
+    return (options?.client ?? client).get<ListIdentitiesResponses, ListIdentitiesErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/me/identities',
+        ...options
+    });
+};
+
+export const unlinkIdentity = <ThrowOnError extends boolean = false>(options: Options<UnlinkIdentityData, ThrowOnError>) => {
+    return (options.client ?? client).delete<UnlinkIdentityResponses, UnlinkIdentityErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/me/identities/{provider}',
+        ...options
     });
 };
 

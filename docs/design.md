@@ -33,6 +33,9 @@ As in Temblo, so the hosted service can shard later:
 
 - Providers are configured per installation: local accounts (argon2 password hashes, always on), Google and Microsoft (OIDC, on when configured).
 - Local login answers the session token directly. Google and Microsoft follow Temblo's flow: the server finishes the provider login, hands the SPA a one-time code at `/auth/complete`, the SPA exchanges it for a bearer token with its PKCE verifier.
+- The login in progress lives in an encrypted, HttpOnly, SameSite=Lax cookie, and the one-time code is sealed too and only exchanges with the browser's PKCE verifier. Both are sealed with the master key under their own labels, so no login state is stored in the database.
+- Provider identities are keyed by the provider's subject. Email never links accounts on its own: Microsoft's email claim is not verified by Microsoft (the nOAuth problem), and treating providers alike keeps one rule. A new identity gets an account only through an invitation link (the account takes the invitation's email) or through open sign-up (Google needs `email_verified`). Signed-in users link a provider from their profile, and keep at least one way to sign in when unlinking.
+- Microsoft is configured for one tenant (`FLEET_MICROSOFT_TENANT`). Multi-tenant Microsoft sign-in is later, for the hosted service.
 - Session tokens are 32 random bytes, stored as SHA-256. A session expires after 30 days without use; its expiry is pushed forward at most once an hour, in the same statement that resolves the request's access. Sessions are never tied to an org.
 - Sign-up is a setting, `FLEET_SIGNUP`:
   - `invite` (default): accounts come only from invitations, the bootstrap and the setup link. Only instance admins create organizations.

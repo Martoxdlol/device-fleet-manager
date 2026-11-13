@@ -3,6 +3,7 @@ use axum::http::{Request, StatusCode};
 use fleet_lib::AppContext;
 use fleet_lib::keys::MasterKey;
 use fleet_lib::model::Signup;
+use fleet_lib::oidc::OidcProviders;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
@@ -24,7 +25,12 @@ fn offline_state() -> AppState {
         .expect("a lazy pool needs no connection");
     AppState {
         db: pool.clone(),
-        ctx: AppContext::new(pool, test_master_key(), Signup::Invite),
+        ctx: AppContext::new(
+            pool,
+            test_master_key(),
+            Signup::Invite,
+            OidcProviders::new(&[]),
+        ),
         app_url: "http://localhost:5173".into(),
     }
 }

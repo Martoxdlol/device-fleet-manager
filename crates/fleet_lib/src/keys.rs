@@ -59,17 +59,17 @@ impl MasterKey {
         let public_key = PublicKey::from(&secret).to_bytes();
         GeneratedKey {
             public_key,
-            sealed_private_key: self.seal(key_id, secret.as_bytes()),
+            sealed_private_key: self.seal(key_id.as_bytes(), secret.as_bytes()),
         }
     }
 
     pub fn open_agent_key(&self, key_id: Uuid, sealed: &[u8]) -> Result<StaticSecret, KeyError> {
-        let bytes = self.open(key_id, sealed)?;
+        let bytes = self.open(key_id.as_bytes(), sealed)?;
         let bytes: [u8; 32] = bytes.try_into().map_err(|_| KeyError::Unseal)?;
         Ok(StaticSecret::from(bytes))
     }
 
-    fn seal(&self, key_id: Uuid, plaintext: &[u8]) -> Vec<u8> {
+    pub fn seal(&self, label: &[u8], plaintext: &[u8]) -> Vec<u8> {
         let nonce_bytes = random_bytes::<NONCE_LEN>();
         let nonce = Nonce::try_from(&nonce_bytes[..]).expect("the nonce has the cipher's length");
         let ciphertext = self
@@ -78,7 +78,7 @@ impl MasterKey {
                 &nonce,
                 Payload {
                     msg: plaintext,
-                    aad: key_id.as_bytes(),
+                    aad: label,
                 },
             )
             .expect("AES-GCM seals a 32 byte key");
@@ -87,7 +87,7 @@ impl MasterKey {
         sealed
     }
 
-    fn open(&self, key_id: Uuid, sealed: &[u8]) -> Result<Vec<u8>, KeyError> {
+    pub fn open(&self, label: &[u8], sealed: &[u8]) -> Result<Vec<u8>, KeyError> {
         if sealed.len() <= NONCE_LEN {
             return Err(KeyError::Unseal);
         }
@@ -98,7 +98,7 @@ impl MasterKey {
                 &nonce,
                 Payload {
                     msg: ciphertext,
-                    aad: key_id.as_bytes(),
+                    aad: label,
                 },
             )
             .map_err(|_| KeyError::Unseal)

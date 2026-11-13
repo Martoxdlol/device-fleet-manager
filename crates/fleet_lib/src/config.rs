@@ -6,6 +6,7 @@ use url::Url;
 use crate::auth::{MIN_PASSWORD_LEN, hash_password, is_password_hash};
 use crate::keys::MasterKey;
 use crate::model::Signup;
+use crate::oidc::{OidcKind, OidcProviderConfig};
 
 const DEFAULT_BIND: &str = "0.0.0.0:3000";
 const DEFAULT_DB_MAX_CONNECTIONS: u32 = 10;
@@ -59,6 +60,7 @@ pub struct Config {
     pub signup: Signup,
     pub master_key: MasterKey,
     pub bootstrap: Option<Bootstrap>,
+    pub oidc: Vec<OidcProviderConfig>,
 }
 
 #[derive(Debug, Clone)]
@@ -108,8 +110,55 @@ impl Config {
             master_key: MasterKey::parse(&required("FLEET_MASTER_KEY")?)
                 .map_err(|error| ConfigError::Unusable("FLEET_MASTER_KEY", error.as_str()))?,
             bootstrap: parse_bootstrap(&var)?,
+            oidc: parse_oidc(&var)?,
         })
     }
+}
+
+fn parse_oidc(
+    var: &impl Fn(&str) -> Option<String>,
+) -> Result<Vec<OidcProviderConfig>, ConfigError> {
+    let mut providers = Vec::new();
+    if let Some(client_id) = var("FLEET_GOOGLE_CLIENT_ID") {
+        let secret = var("FLEET_GOOGLE_CLIENT_SECRET").ok_or(ConfigError::Requires(
+            "FLEET_GOOGLE_CLIENT_ID",
+            "FLEET_GOOGLE_CLIENT_SECRET",
+        ))?;
+        providers.push(OidcProviderConfig {
+            kind: OidcKind::Google,
+            issuer: "https://accounts.google.com".into(),
+            client_id,
+            client_secret: Secret::new(secret),
+        });
+    }
+    if let Some(client_id) = var("FLEET_MICROSOFT_CLIENT_ID") {
+        let secret = var("FLEET_MICROSOFT_CLIENT_SECRET").ok_or(ConfigError::Requires(
+            "FLEET_MICROSOFT_CLIENT_ID",
+            "FLEET_MICROSOFT_CLIENT_SECRET",
+        ))?;
+        let tenant = var("FLEET_MICROSOFT_TENANT").ok_or(ConfigError::Requires(
+            "FLEET_MICROSOFT_CLIENT_ID",
+            "FLEET_MICROSOFT_TENANT",
+        ))?;
+        let multi = ["common", "organizations", "consumers"];
+        if multi.contains(&tenant.to_ascii_lowercase().as_str())
+            || !tenant
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '.')
+        {
+            return Err(ConfigError::Unusable(
+                "FLEET_MICROSOFT_TENANT",
+                "must be one tenant's id or domain; multi-tenant sign-in is not supported",
+            ));
+        }
+        providers.push(OidcProviderConfig {
+            kind: OidcKind::Microsoft,
+            issuer: format!("https://login.microsoftonline.com/{tenant}/v2.0"),
+            client_id,
+            client_secret: Secret::new(secret),
+        });
+    }
+    Ok(providers)
 }
 
 fn parse_signup(raw: Option<String>) -> Result<Signup, ConfigError> {

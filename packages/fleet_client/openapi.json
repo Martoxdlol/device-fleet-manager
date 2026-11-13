@@ -195,6 +195,44 @@
         ]
       }
     },
+    "/api/v1/auth/exchange": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "exchange_code",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExchangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "tags": [
@@ -256,6 +294,118 @@
             "bearer": []
           }
         ]
+      }
+    },
+    "/api/v1/auth/oidc/{provider}/callback": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "oidc_callback",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "google",
+                "microsoft"
+              ]
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "303": {
+            "description": "Back to the console"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oidc/{provider}/start": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "start_oidc",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "google",
+                "microsoft"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartOidc"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartedOidc"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/auth/password-reset": {
@@ -1034,6 +1184,90 @@
             }
           },
           "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/identities": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "operationId": "list_identities",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LinkedIdentity"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/identities/{provider}": {
+      "delete": {
+        "tags": [
+          "me"
+        ],
+        "operationId": "unlink_identity",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "google",
+                "microsoft"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {},
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -3034,6 +3268,22 @@
           }
         }
       },
+      "ExchangeRequest": {
+        "type": "object",
+        "required": [
+          "code",
+          "code_verifier"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "code_verifier": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "FieldError": {
         "type": "object",
         "required": [
@@ -3314,6 +3564,28 @@
           }
         },
         "additionalProperties": false
+      },
+      "LinkedIdentity": {
+        "type": "object",
+        "required": [
+          "provider",
+          "created_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          }
+        }
       },
       "LoginRequest": {
         "type": "object",
@@ -3776,6 +4048,7 @@
                 "email",
                 "name",
                 "instance_admin",
+                "has_password",
                 "created_at"
               ],
               "properties": {
@@ -3785,6 +4058,9 @@
                 },
                 "email": {
                   "type": "string"
+                },
+                "has_password": {
+                  "type": "boolean"
                 },
                 "id": {
                   "type": "string",
@@ -3856,7 +4132,9 @@
       "Provider": {
         "type": "string",
         "enum": [
-          "password"
+          "password",
+          "google",
+          "microsoft"
         ]
       },
       "ResetPasswordRequest": {
@@ -3987,6 +4265,41 @@
         },
         "additionalProperties": false
       },
+      "StartOidc": {
+        "type": "object",
+        "required": [
+          "code_challenge"
+        ],
+        "properties": {
+          "code_challenge": {
+            "type": "string"
+          },
+          "invitation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "return_to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "StartedOidc": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        }
+      },
       "UpdateFleet": {
         "type": "object",
         "properties": {
@@ -4085,6 +4398,7 @@
           "email",
           "name",
           "instance_admin",
+          "has_password",
           "created_at"
         ],
         "properties": {
@@ -4094,6 +4408,9 @@
           },
           "email": {
             "type": "string"
+          },
+          "has_password": {
+            "type": "boolean"
           },
           "id": {
             "type": "string",

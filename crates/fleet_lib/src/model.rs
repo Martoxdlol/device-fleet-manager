@@ -44,6 +44,7 @@ pub struct User {
     pub email: String,
     pub name: String,
     pub instance_admin: bool,
+    pub has_password: bool,
     #[serde(with = "time::serde::rfc3339")]
     pub created_at: OffsetDateTime,
 }
