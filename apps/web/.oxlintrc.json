@@ -1,0 +1,90 @@
+{
+    "$schema": "../../node_modules/oxlint/configuration_schema.json",
+    "plugins": ["react", "typescript", "oxc"],
+    "rules": {
+        "react/rules-of-hooks": "error",
+        "react/forbid-elements": [
+            "error",
+            {
+                "forbid": [
+                    {
+                        "element": "select",
+                        "message": "Native selects are forbidden. Use the shared Combobox for selection controls."
+                    }
+                ]
+            }
+        ],
+        "react/only-export-components": [
+            "warn",
+            {
+                "allowConstantExport": true,
+                "allowExportNames": ["buttonVariants", "badgeVariants"]
+            }
+        ]
+    },
+    "overrides": [
+        {
+            "files": ["src/core/**"],
+            "rules": {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "patterns": [
+                            {
+                                "group": [
+                                    "../../*",
+                                    "../../**",
+                                    "@/*",
+                                    "@/**",
+                                    "!@/core",
+                                    "!@/core/**"
+                                ],
+                                "message": "core imports only core and packages, never app code"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "files": ["src/**/*.tsx"],
+            "rules": {
+                "react/jsx-no-literals": [
+                    "error",
+                    {
+                        "noStrings": true,
+                        "restrictedAttributes": [
+                            "aria-label",
+                            "title",
+                            "placeholder",
+                            "label",
+                            "alt"
+                        ],
+                        "allowedStrings": [
+                            "·",
+                            "/",
+                            "×",
+                            "→",
+                            "←",
+                            "%",
+                            ":",
+                            "(",
+                            ")",
+                            "+",
+                            "-",
+                            ",",
+                            ""
+                        ],
+                        "ignoreProps": true
+                    }
+                ]
+            }
+        },
+        {
+            "files": ["src/i18n/**", "tests/**", "src/**/*.test.tsx"],
+            "rules": {
+                "react/jsx-no-literals": "off"
+            }
+        }
+    ]
+}

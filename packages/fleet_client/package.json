@@ -1,0 +1,25 @@
+{
+  "name": "@fleet/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react-query": "./src/react-query.ts"
+  },
+  "scripts": {
+    "generate": "openapi-ts"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.90.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.85.0",
+    "typescript": "^5.9.0"
+  }
+}

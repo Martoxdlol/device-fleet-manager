@@ -1,0 +1,5 @@
+[package]
+name = "fleet_brand"
+version.workspace = true
+edition.workspace = true
+publish = false

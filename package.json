@@ -1,0 +1,31 @@
+{
+  "name": "device-fleet-manager",
+  "type": "module",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ],
+    "catalog": {
+      "react": "^19.2",
+      "react-dom": "^19.2",
+      "typescript": "7.0.2"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "format": "oxfmt '**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}'",
+    "format:check": "bun run format --check",
+    "codegen": "cargo run -q -p fleet_server --bin gen-openapi -- packages/fleet_client/openapi.json && bun run --cwd packages/fleet_client generate"
+  },
+  "devDependencies": {
+    "@tsconfig/bun": "^1.0.11",
+    "@types/bun": "latest",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.79.0"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

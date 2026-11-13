@@ -1,0 +1,15 @@
+[package]
+name = "fleet_i18n"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+serde.workspace = true
+utoipa = { workspace = true, optional = true }
+
+[features]
+schema = ["dep:utoipa"]
+
+[dev-dependencies]
+serde_json.workspace = true
