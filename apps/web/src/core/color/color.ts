@@ -1,4 +1,3 @@
-/** `#rrggbb` lowercased, from 3 or 6 hex digits with or without `#`, or null. */
 export function parseHex(value: string) {
     const digits = value.trim().replace(/^#/, '').toLowerCase()
     if (/^[0-9a-f]{6}$/.test(digits)) return `#${digits}`
@@ -6,7 +5,6 @@ export function parseHex(value: string) {
     return null
 }
 
-/** The red, green and blue of `#rrggbb`, from 0 to 255. */
 export function channels(hex: string) {
     const value = Number.parseInt(hex.slice(1), 16)
     return [(value >> 16) & 255, (value >> 8) & 255, value & 255]
@@ -23,7 +21,6 @@ function luminance(hex: string) {
 const dark = '#171717'
 const light = '#ffffff'
 
-/** Whichever of near black and white has more contrast on `hex`. */
 export function inkOn(hex: string) {
     const background = luminance(hex)
     const withLight = 1.05 / (background + 0.05)

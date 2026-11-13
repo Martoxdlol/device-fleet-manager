@@ -9,23 +9,6 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/": {
-      "get": {
-        "operationId": "root",
-        "responses": {
-          "200": {
-            "description": "Server is up",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/health": {
       "get": {
         "operationId": "health",

@@ -40,7 +40,6 @@ function SearchPanel({ results }: { results: SearchResult[] }) {
     )
 }
 
-/** The top bar's middle: the search field, which does not search yet. `results` stand in for what a search finds. */
 export function CommandBar({ results = [] }: { results?: SearchResult[] }) {
     const t = useMessages().app.commandBar
     const mobile = useMobile()

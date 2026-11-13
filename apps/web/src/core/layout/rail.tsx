@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { RailNavigation, type NavItem } from './navigation'
 import { useBoundary } from '../boundary/boundary-context'
 
-/** The column at the left edge on wide screens: what heads it, the navigation, and its footer. */
 export function Rail({
     header,
     navigation,

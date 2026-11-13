@@ -1,10 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 import { Spinner } from '../core/ui/primitives'
 
-/**
- * The end of a list that loads its next page once it scrolls near view, and shows the page on
- * its way. It asks again while it stays in view, so short pages keep filling the list.
- */
 export function LoadOnScroll({
     more,
     loading,
@@ -17,7 +13,6 @@ export function LoadOnScroll({
     more: boolean
     loading: boolean
     onLoad: () => void
-    /** Says what is loading, for assistive technology. */
     label: string
     as?: 'div' | 'li'
     className?: string

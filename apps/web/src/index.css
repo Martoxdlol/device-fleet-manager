@@ -2,7 +2,6 @@
 @import './core/theme.css';
 
 @theme {
-    /* Strokes drawn with `pathLength="1"` and a dash of 1 trace themselves in. */
     --animate-draw: draw 900ms cubic-bezier(0.65, 0, 0.35, 1) both;
 
     @keyframes draw {
@@ -12,7 +11,6 @@
     }
 }
 
-/* Choice tones: one hue per name, tinted for pills in either theme. Names match the backend's set. */
 @layer components {
     .tone {
         --tone-hue: 0;

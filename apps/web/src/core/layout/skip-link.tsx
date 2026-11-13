@@ -1,6 +1,5 @@
 import { useLocale } from '../locale/locale-context'
 
-/** Hidden until focused, then moves focus past the chrome to the page's main content. */
 export function SkipLink() {
     const t = useLocale().messages
     return (

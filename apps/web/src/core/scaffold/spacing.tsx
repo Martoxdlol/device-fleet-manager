@@ -1,6 +1,5 @@
 import { SpacingContext, useSpacing, spacingVariables, type Spacing } from './spacing-context'
 import { type ReactNode } from 'react'
-/** Nested providers override only the requested values. Layout and page components inherit them. */
 export function SpacingProvider({
     value,
     children,

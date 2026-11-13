@@ -12,7 +12,6 @@ An agent on Windows and Linux machines connects to a server over the internet, r
 | [crates/fleet_lib](crates/fleet_lib) | Config, database pool, migrations, repositories, telemetry |
 | [crates/fleet_lib/migrations](crates/fleet_lib/migrations) | SQL migrations, embedded into the server at compile time |
 | [crates/fleet_i18n](crates/fleet_i18n) | Languages and localized server messages |
-| [crates/fleet_brand](crates/fleet_brand) | The product name, the only place the server side defines it |
 | [packages/fleet_client](packages/fleet_client) | TypeScript client generated from `openapi.json` |
 | [apps/web](apps/web) | Web console (React, Vite, shadcn, Base UI) |
 
@@ -22,7 +21,7 @@ An agent on Windows and Linux machines connects to a server over the internet, r
 bun install                      # JS workspaces
 cp .env.example .env             # then set DATABASE_URL
 cargo run -p fleet_server        # API on :3000, migrates on start
-bun run --cwd apps/web dev       # console on :5173
+bun run --cwd apps/web dev       # console on :5173, /api proxied to :3000
 bun run codegen                  # OpenAPI document and TypeScript client, after API changes
 cargo test --workspace           # Rust tests
 bun run lint && bun run format:check
@@ -30,3 +29,5 @@ bun run --cwd apps/web typecheck
 ```
 
 Applied migrations are never edited; add a new one.
+
+The Docker image serves the API and the console from one container: the console is built into it and served from `FLEET_WEB_DIR`, every path outside `/api` and `/health` is the console.

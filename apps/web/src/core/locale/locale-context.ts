@@ -1,7 +1,6 @@
 import { createContext, useContext } from 'react'
 import type { DayPickerLocale } from 'react-day-picker/locale'
 
-/** Every word core says itself. An app in another language passes its own through `LocaleContext`. */
 export interface CoreMessages {
     close: string
     loading: string
@@ -43,14 +42,11 @@ export const coreEnglish: CoreMessages = {
 }
 
 export interface Locale {
-    /** The BCP 47 tag dates and numbers format with, such as `es-US`. */
     tag: string
     messages: CoreMessages
-    /** react-day-picker's names of months and days. Its own English when absent. */
     calendar?: DayPickerLocale
 }
 
-/** English with the browser's formats unless an app provides its own. */
 export const LocaleContext = createContext<Locale>({ tag: 'en-US', messages: coreEnglish })
 
 export function useLocale() {

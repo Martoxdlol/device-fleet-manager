@@ -3,7 +3,6 @@ export function matchesSearch(label: string, search: string) {
     return normalize(label).includes(normalize(search.trim()))
 }
 
-/** Options without a group first, then each group's options together, in the order they first appear. */
 export function groupItems<T>(
     items: readonly T[],
     getItemGroup?: (item: T) => string | undefined,

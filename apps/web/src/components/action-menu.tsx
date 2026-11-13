@@ -17,23 +17,17 @@ export interface MenuItem {
     key: string
     label: string
     icon: ReactNode
-    /** Shown on the right, written for the platform. */
     keys?: KeyBinding
-    /** The browser's own event runs it, such as a paste: the keys show but are not bound. */
     nativeKeys?: boolean
-    /** Items of one group sit together; groups are separated in the order they first appear. */
     group?: string
-    /** Disables the item; a reason says why. */
     disabled?: string | boolean
     variant?: 'default' | 'destructive'
     onSelect: () => void
 }
 
 export interface MenuRequest {
-    /** What the menu acts on, the title of the sheet a long press opens. */
     title: string
     items: readonly MenuItem[]
-    /** True when this menu opens, false when it closes. */
     onOpenChange?: (open: boolean) => void
 }
 
@@ -41,10 +35,6 @@ type Offer = () => MenuRequest | undefined
 
 const OfferContext = createContext<((offer: Offer) => void) | null>(null)
 
-/**
- * What an element inside an `ActionMenuArea` spreads to have its own menu: a right-click, a long
- * press or `openMenuFrom` on it opens what `offer` answers when it opens.
- */
 export function useMenuTarget() {
     const offer = useContext(OfferContext)
     return (request: Offer) =>
@@ -53,11 +43,9 @@ export function useMenuTarget() {
             : undefined
 }
 
-/** Shift+F10 and the Menu key open the menu of the focused element. */
 export const isMenuKey = (event: { key: string; shiftKey: boolean }) =>
     event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey)
 
-/** Opens the menu of `element` from the keyboard, under its start. */
 export function openMenuFrom(element: Element) {
     const box = element.getBoundingClientRect()
     element.dispatchEvent(
@@ -85,11 +73,6 @@ function groupsOf(items: readonly MenuItem[]) {
     return groups
 }
 
-/**
- * An area whose right-click, Shift+F10 and Menu key open a menu at the pointer or the focused
- * element, and whose long press on touch opens it as a bottom sheet. Elements in it name their
- * own menu with `useMenuTarget`; anywhere else in it opens `fallback`'s.
- */
 export function ActionMenuArea({ fallback, children }: { fallback?: Offer; children: ReactNode }) {
     const t = useMessages()
     const keys = t.components.keys
@@ -146,7 +129,6 @@ export function ActionMenuArea({ fallback, children }: { fallback?: Offer; child
                         pointer.current = 'keyboard'
                     }}
                     onContextMenuCapture={(event) => {
-                        // A text field keeps the browser's menu, with its Paste.
                         if (
                             event.target instanceof Element &&
                             event.target.closest('input, textarea, [contenteditable=true]')
@@ -157,7 +139,6 @@ export function ActionMenuArea({ fallback, children }: { fallback?: Offer; child
                         reset()
                     }}
                     onClickCapture={(event) => {
-                        // The press that opened the sheet opens nothing else.
                         if (!swallow.current) return
                         swallow.current = false
                         event.preventDefault()

@@ -1,10 +1,8 @@
 import type { ColumnLayout, DataColumn, TableSort } from './types'
 
 export const SELECTION_WIDTH = 42
-/** Rendered height of the sticky head, its bottom border included. */
 export const HEADER_HEIGHT = 39
 export const ROW_HEIGHT = 36
-/** Tile width per size; the tile is a square media box plus a two-line label. */
 export const TILE_WIDTH = { sm: 96, md: 144, lg: 208 }
 export const TILE_LABEL = 38
 export const TILE_GAP = 12
@@ -22,7 +20,6 @@ export function columnWidth<T>(column: DataColumn<T>, width = column.width ?? 18
     return Math.min(Math.max(min, column.maxWidth ?? 800), Math.max(min, width))
 }
 
-/** Pinned offsets and grid tracks share the exact same widths. */
 export function columnLayout<T>(
     columns: readonly DataColumn<T>[],
     widths: Readonly<Record<string, number>>,
@@ -71,7 +68,6 @@ export function nextSort(sort: TableSort, key: string): TableSort {
           : null
 }
 
-/** A range follows the displayed order, skips disabled rows, and supports deselection. */
 export function selectRange(
     selection: ReadonlySet<string>,
     ids: readonly string[],

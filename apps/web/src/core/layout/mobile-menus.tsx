@@ -9,7 +9,6 @@ import { useLocale } from '../locale/locale-context'
 const sheetList =
     'flex flex-col gap-[5px] [&_a]:flex [&_a]:items-center [&_a]:gap-2.5 [&_a]:p-[11px] [&_a]:justify-start [&>button]:flex [&>button]:items-center [&>button]:gap-2.5 [&>button]:p-[11px] [&>button]:justify-start [&_a:hover]:bg-accent/70 [&_a[aria-current=page]]:bg-accent'
 
-/** On a phone, the destinations the bottom navigation has no room for, then the app's own rows. */
 export function NavigationMenu({
     open,
     onClose,
@@ -42,7 +41,6 @@ export function NavigationMenu({
     )
 }
 
-/** On a phone, the page actions the top bar has no room for. */
 export function ActionsMenu({
     open,
     onClose,

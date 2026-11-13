@@ -14,11 +14,6 @@ import { ToolMenuContext, ToolbarFoldContext } from './toolbar-fold'
 import type { DataTableActionDef, DataTableController } from './types'
 import { useMessages } from '../../i18n/provider'
 
-/**
- * The button row is capped to the buttons it renders, so free space is what the toolbar's leading
- * group, or the row's parent outside a toolbar, has left once everything beside the row takes its
- * room. It goes below zero when they already overflow.
- */
 function availableWidth(element: HTMLElement) {
     const stop = element.closest<HTMLElement>('.dt-toolbar-leading') ?? element.parentElement
     if (!stop) return element.clientWidth
@@ -33,7 +28,6 @@ function availableWidth(element: HTMLElement) {
     return space
 }
 
-/** Selection-aware actions; zero selections don't suppress global actions. */
 export function DataTableActions<T>({
     table,
     rows,
@@ -66,7 +60,6 @@ export function DataTableActions<T>({
             const gap = parseFloat(getComputedStyle(element).columnGap) || 0
             const tools = toolSpace?.() ?? 0
             const available = availableWidth(element)
-            // The room the actions would have with the tools beside them.
             const beside = isFolded?.() ? available - tools : available
             const total =
                 widths.reduce((sum, width) => sum + width, 0) + Math.max(0, widths.length - 1) * gap
@@ -94,7 +87,6 @@ export function DataTableActions<T>({
         else if (element.parentElement) observer.observe(element.parentElement)
         return () => observer.disconnect()
     }, [actionKeys, toolSpace, isFolded, setFolded])
-    // Without actions to hold them, the tools go back beside the leading group.
     useLayoutEffect(() => () => setFolded?.(false), [setFolded])
 
     if (!resolved.length && !context.selectionCount) return null

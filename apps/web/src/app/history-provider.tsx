@@ -13,9 +13,7 @@ function load(): Stack {
     try {
         const stack = JSON.parse(sessionStorage.getItem(storageKey) ?? 'null') as Stack | null
         if (stack && Array.isArray(stack.entries) && Number.isInteger(stack.index)) return stack
-    } catch {
-        /* memory-only history */
-    }
+    } catch {}
     return { entries: [], index: -1 }
 }
 
@@ -33,13 +31,6 @@ function advance(stack: Stack, type: NavigationType, location: Location): Stack 
     return index < 0 ? { entries: [entry], index: 0 } : { entries: stack.entries, index }
 }
 
-/**
- * The tab's history as this app made it. The browser only tells its length, so every entry is
- * recorded by its location key as the router commits it: a push drops what was ahead, a pop
- * finds the entry again, a replace swaps it. It follows the router rather than renders, which
- * batch a click's replace and push into one. Session storage keeps it across reloads, as the
- * browser keeps its own.
- */
 export function HistoryProvider({ router, children }: { router: Router; children: ReactNode }) {
     const [stack, setStack] = useState(() =>
         advance(load(), router.state.historyAction, router.state.location),
@@ -54,9 +45,7 @@ export function HistoryProvider({ router, children }: { router: Router; children
     useEffect(() => {
         try {
             sessionStorage.setItem(storageKey, JSON.stringify(stack))
-        } catch {
-            /* memory-only history */
-        }
+        } catch {}
     }, [stack])
     const value = useMemo<History>(
         () => ({

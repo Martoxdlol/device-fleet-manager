@@ -1,10 +1,6 @@
 import { cn } from 'cn'
 import type { ComponentProps } from 'react'
 
-/**
- * The line a pane is resized from, drawn only on hover, focus and drag. It takes the props of
- * `useResize` and reads its orientation from them; its size and place are the caller's.
- */
 export function ResizeHandle({ className, ...props }: ComponentProps<'div'>) {
     return (
         <div

@@ -36,7 +36,7 @@ Do not assume anything, ask everything.
 - No sweeps. Use queues or other strategies, and ask first if those smell.
 - Assume anything without a natural limit can grow without bound: cursor pagination everywhere
 - `apps/web/src/core` is the app-agnostic UI library copied from Temblo. Nothing in it imports app code (lint rejects it). Start from apps/web/src/core/README.md for anything about core controls, scaffold, shell or resize.
-- The product name lives in one place per side: `crates/fleet_brand` and `apps/web/src/brand.ts`. Never hardcode it elsewhere.
+- The product name lives in one place per side: `apps/web/src/brand.ts` for the console, and one module for the server and agent once they need it. Never hardcode it elsewhere.
 - The agent protocol never renames or removes a message, only adds optional fields, and ignores unknown messages (docs/design.md, Agent protocol).
 
 # Work rules

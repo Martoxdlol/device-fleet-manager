@@ -2,7 +2,6 @@ import { cn } from 'cn'
 import type { ReactNode } from 'react'
 import { Surface } from '../ui/primitives'
 
-/** A panel beside the page on wide screens. It owns its scroll. */
 export function SidePanel({
     label,
     className,

@@ -1,4 +1,3 @@
-/** Words shared across areas. An area's own text lives in its file. */
 export const common = {
     cancel: 'Cancel',
     clearSearch: 'Clear search',

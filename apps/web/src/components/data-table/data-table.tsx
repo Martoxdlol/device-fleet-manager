@@ -52,7 +52,6 @@ import type {
 } from './types'
 import { useFormat, useMessages } from '../../i18n/provider'
 
-/** A row's box shows on hover or keyboard focus until a selection makes every box show. */
 const quietCheckbox =
     '[&_.dt-checkbox>span]:opacity-0 group-hover/row:[&_.dt-checkbox>span]:opacity-100 group-focus-visible/row:[&_.dt-checkbox>span]:opacity-100 [&_.dt-checkbox:has(:focus-visible)>span]:opacity-100'
 function SelectionCheckbox({
@@ -83,9 +82,7 @@ function SelectionCheckbox({
                 ref={(node) => {
                     if (node) node.indeterminate = mixed
                 }}
-                onChange={() => {
-                    /* Click handles pointer and keyboard activation with shift state. */
-                }}
+                onChange={() => {}}
                 onClick={(event) => onToggle(event.shiftKey)}
             />
             <span
@@ -245,7 +242,6 @@ function isInteractive(target: EventTarget | null) {
     )
 }
 
-/** Where a key belongs to the field it is typed in rather than to the list. */
 function typing(target: EventTarget | null) {
     return (
         target instanceof Element &&
@@ -271,7 +267,6 @@ function menuItems<T>(
     }))
 }
 
-/** The plane below the header, where an empty or failed listing says so. */
 const emptyClasses =
     'dt-empty sticky left-0 h-[calc(100%-var(--dt-head-height))] min-h-0 p-0 text-muted-foreground [&>svg]:size-[23px] [&>svg]:opacity-50'
 const cellClasses =
@@ -281,11 +276,6 @@ const pinnedClasses =
 const rowStateClasses =
     "outline-none select-none [--dt-row-bg:var(--card)] hover:[--dt-row-bg:var(--dt-hover)] aria-selected:[--dt-row-bg:var(--dt-selected)] data-openable:cursor-pointer data-dragging:opacity-50 data-dimmed:opacity-50 data-drop:[--dt-row-bg:var(--dt-selected)] data-drop:after:pointer-events-none data-drop:after:absolute data-drop:after:inset-0 data-drop:after:z-4 data-drop:after:border data-drop:after:border-primary data-drop:after:content-['']"
 
-/**
- * One virtualized viewport for both presentations. In list mode a virtual item is one row; in
- * grid mode it is one visual row of `perRow` tiles, so the virtualizer, measurement and keys
- * work the same way and only the index math and the rendered element differ.
- */
 function TableViewport<T>({
     table,
     rows,
@@ -308,7 +298,7 @@ function TableViewport<T>({
     onPaste,
     text: ownText,
 }: DataTableProps<T>) {
-    'use no memo' // Keep the virtualizer's mutable instance inside this rendering boundary.
+    'use no memo'
     const t = useMessages()
     const format = useFormat()
     const text = ownText ?? t.components.table
@@ -350,8 +340,6 @@ function TableViewport<T>({
     const itemHeight = grid ? tileHeight + TILE_GAP : rowHeight
     const focusedIndex =
         focusedId === null ? -1 : rows.findIndex((row) => table.getRowId(row) === focusedId)
-    // In a grouped list the virtual items are rows and headings; elsewhere an item is a row
-    // (or a row of tiles). `rowItem` maps a row to the item that holds it.
     const items = useMemo(() => {
         if (grid || !rowGroup) return null
         const list: ({ row: number } | { heading: string })[] = []
@@ -391,8 +379,6 @@ function TableViewport<T>({
         overscan: 8,
         scrollMargin: headerHeight,
         scrollPaddingStart: headerHeight,
-        // This supported mode keeps the visible range reactive with React Compiler,
-        // and avoids transforms interfering with sticky columns and portal anchors.
         directDomUpdates: true,
         directDomUpdatesMode: 'position',
         rangeExtractor: useCallback(
@@ -421,7 +407,6 @@ function TableViewport<T>({
         return () => observer.disconnect()
     }, [])
     useLayoutEffect(() => {
-        // Deleting/filtering a long list must never strand the viewport below its rows.
         const element = scrollRef.current
         if (element)
             element.scrollTop = Math.min(
@@ -446,7 +431,6 @@ function TableViewport<T>({
             try {
                 await pagination.fetchNextPage()
             } catch {
-                // The pagination source reports the failure through `error`.
             } finally {
                 requestRef.current = false
             }
@@ -476,7 +460,6 @@ function TableViewport<T>({
     const plain = { shiftKey: false, metaKey: false, ctrlKey: false }
     const modified = (event: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean }) =>
         event.shiftKey || event.metaKey || event.ctrlKey
-    /** The single meaning of selected. A plain click replaces it; modifiers extend it. */
     const select = (
         id: string,
         event: { shiftKey: boolean; metaKey: boolean; ctrlKey: boolean },
@@ -489,12 +472,6 @@ function TableViewport<T>({
         table.setSelection(new Set([id]))
         anchorRef.current = id
     }
-    /**
-     * A click on the row itself. It selects, and unless a modifier is extending the selection it
-     * also opens: this is what separates a row click from a checkbox click. The second click of a
-     * double click does nothing, so opening a folder never opens it twice, or opens whatever row
-     * the new listing puts under the pointer.
-     */
     const activate = (
         row: T,
         id: string,
@@ -509,11 +486,6 @@ function TableViewport<T>({
         select(id, event)
         onRowActivate?.(row)
     }
-    /**
-     * A drag started on a selected row carries the selection; one started elsewhere carries that
-     * row alone and leaves the selection, and so the detail it opened, as it was. The rows it
-     * carries dim while it lasts, so what moves is always what the user sees marked.
-     */
     const dragProps = (row: T, id: string) => {
         if (!rowDrag) return undefined
         return {
@@ -574,10 +546,6 @@ function TableViewport<T>({
             },
         }
     }
-    /**
-     * A row's menu acts on the selection when the row is in it, and on the row alone otherwise,
-     * outlined while the menu is open and leaving the selection as it was.
-     */
     const rowMenu = (row: T, id: string, label: string) => {
         if (!actions?.length) return undefined
         return menuTarget((): MenuRequest | undefined => {
@@ -764,13 +732,10 @@ function TableViewport<T>({
             className="dt-viewport relative min-h-0 flex-1 overflow-auto outline-none overscroll-contain scroll-pt-(--dt-head-height) [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent] [overflow-anchor:none]"
             ref={scrollRef}
             style={styles}
-            // Focusable, so a click below the rows keeps the list's keys and its paste.
             tabIndex={-1}
             {...dragScroll}
             onKeyDown={(event) => {
                 if (actions && !event.defaultPrevented && !typing(event.target)) {
-                    // Keys act as the focused row's menu would: on the selection when the row
-                    // is in it, on the row alone otherwise.
                     const index = Number(
                         (event.target as Element)
                             .closest('[data-row-index]')
@@ -1037,7 +1002,6 @@ function TableViewport<T>({
     )
 }
 
-/** Owns its scroll area. Give its parent a bounded height and min-height: 0. */
 export function DataTable<T>(props: DataTableProps<T>) {
     const id = useId()
     const {
@@ -1056,7 +1020,6 @@ export function DataTable<T>(props: DataTableProps<T>) {
     const format = useFormat()
     const total = totalCount !== undefined && totalCount > rows.length ? totalCount : undefined
     const viewport = <TableViewport key={props.resetKey ?? id} {...props} />
-    /** Below the rows, the menu acts on what holds them, such as the open folder. */
     const emptyMenu = (): MenuRequest | undefined =>
         menuActions && {
             title: props.menuTitle?.([]) ?? props.label,

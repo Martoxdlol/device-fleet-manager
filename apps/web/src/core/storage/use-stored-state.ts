@@ -3,12 +3,6 @@ import { useStorage } from './storage-context'
 
 const subscribeNothing = () => () => {}
 
-/**
- * `useState` remembered per browser under `key`. Storage that is missing, full or blocked
- * degrades to plain state. Without a key nothing is stored. `parse` validates what comes back
- * so a stale or foreign value never reaches the component. A page rendered on the server, and
- * the browser's render that hydrates it, start from `fallback`, and read storage after.
- */
 export function useStoredState<T>(
     key: string | undefined,
     fallback: T,

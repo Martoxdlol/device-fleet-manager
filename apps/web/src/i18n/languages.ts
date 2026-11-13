@@ -1,15 +1,12 @@
-/** The languages the app speaks (docs/i18n-design.md). Must stay in step with the server's `Lang`. */
 export const languages = ['en', 'es'] as const
 
 export type Language = (typeof languages)[number]
 
-/** Each language named in itself, for the language picker. */
 export const languageNames: Record<Language, string> = { en: 'English', es: 'Español' }
 
 export const isLanguage = (value: unknown): value is Language =>
     languages.some((language) => language === value)
 
-/** The browser's first language the app speaks, by primary subtag, or English. */
 export function browserLanguage(): Language {
     for (const tag of navigator.languages ?? [navigator.language]) {
         const primary = tag?.toLowerCase().split('-')[0]
@@ -18,8 +15,6 @@ export function browserLanguage(): Language {
     return 'en'
 }
 
-/** The tag dates and numbers format with: the language with the browser's region, so Spanish
- * on an `en-US` browser formats as `es-US`. */
 export function formatTag(language: Language): string {
     try {
         const region = navigator.language

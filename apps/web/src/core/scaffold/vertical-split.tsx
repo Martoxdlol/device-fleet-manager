@@ -8,18 +8,11 @@ import { useMobile } from './use-mobile'
 
 const MIN_TOP = 120
 const MIN_PANEL = 96
-/** The least and the most of the height the panel takes, whatever the container's. */
 const BOUNDS: [number, number] = [0.1, 0.9]
 
 const parseFraction = (raw: unknown) =>
     typeof raw === 'number' && raw >= BOUNDS[0] && raw <= BOUNDS[1] ? raw : undefined
 
-/**
- * A pane over a panel, such as code over its problems. The divider occupies the layout gap and
- * sizes the panel. A collapsed panel keeps its header only, below the gap, and the pane takes
- * the rest. On a phone an open panel covers the content area, as a stacked detail does, and
- * Escape collapses it.
- */
 export function VerticalSplit({
     top,
     panel,
@@ -34,15 +27,10 @@ export function VerticalSplit({
     top: ReactNode
     panel: ReactNode
     collapsed: boolean
-    /** Names the divider, such as "Resize problems". */
     label: string
-    /** Names the panel while it covers the content area. */
     panelLabel?: string
-    /** Share of the height the panel takes until the user drags the divider. */
     defaultFraction?: number
-    /** Remember the divider position per browser under this name. */
     storageKey?: string
-    /** Collapses the panel, which Escape does while it covers the content area. */
     onCollapse?: () => void
     className?: string
 }) {

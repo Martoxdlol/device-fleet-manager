@@ -8,21 +8,15 @@ function isTextField(element: Element | null): element is HTMLElement {
     )
 }
 
-/** Writes the visual viewport, which an AppFrame's body takes. iOS Safari ignores
- * interactive-widget=resizes-content and only shrinks the visual viewport under the keyboard,
- * which leaves fixed content behind it. */
 export function ViewportProvider({ children }: { children: ReactNode }) {
     const [keyboard, setKeyboard] = useState(false)
     useEffect(() => {
         const viewport = window.visualViewport
         if (!viewport) return
         const root = document.documentElement
-        // Chromium shrinks the layout under the keyboard, so the uncovered height is the tallest
-        // one seen at the current width.
         let width = 0
         let full = 0
         const measure = () => {
-            // Pinch zoom shrinks the visual viewport too, while the layout keeps its size.
             const zoomed = viewport.scale !== 1
             const height = zoomed ? root.clientHeight : viewport.height
             const top = zoomed ? 0 : viewport.offsetTop

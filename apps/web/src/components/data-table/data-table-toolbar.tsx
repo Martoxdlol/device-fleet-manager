@@ -26,7 +26,6 @@ import type { DataTableController, DataTableFilterGroup } from './types'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../core/ui/tooltip'
 import { useFormat, useMessages } from '../../i18n/provider'
 
-/** Icons by default; tooltips and aria-labels carry the name. */
 export function DataTableAction({
     label,
     icon,
@@ -71,7 +70,6 @@ export function DataTableAction({
     )
 }
 
-/** All filter controls live in one menu, separate from record actions. */
 export function DataTableFilters({ filters }: { filters: readonly DataTableFilterGroup[] }) {
     const t = useMessages()
     const format = useFormat()
@@ -172,7 +170,6 @@ export function DataTableToolbar({
             const items = element ? Array.from(element.children) : []
             if (!items.length || !items.every((item) => item.hasAttribute('data-dt-tool'))) return 0
             const gap = parseFloat(getComputedStyle(element!.parentElement!).columnGap) || 0
-            // The rule is a pixel wide, with the bar's gap on either side.
             return element!.getBoundingClientRect().width + 1 + 2 * gap
         },
     }))
@@ -189,12 +186,9 @@ export function DataTableToolbar({
                 >
                     {children}
                 </div>
-                {/* A sibling of both groups, so the bar's own gap sets the space on either side of
-                it. It goes when the group it introduces is empty or folded. */}
                 {!folded && (
                     <div aria-hidden className="dt-toolbar-rule h-5 w-px shrink-0 bg-border" />
                 )}
-                {/* Folded, the tools stay laid out out of sight, so their room is still known. */}
                 <div
                     ref={tools}
                     className={cn(
@@ -256,7 +250,6 @@ export function DataTableSearch({
     )
 }
 
-/** Switches between the list and the tile grid. Only meaningful when the table has a `tile`. */
 export function DataTableViewToggle<T>({ table }: { table: DataTableController<T> }) {
     const t = useMessages().components.dataTable
     const inMenu = useContext(ToolMenuContext)
@@ -316,10 +309,6 @@ function SortItems<T>({ table }: { table: DataTableController<T> }) {
     )
 }
 
-/**
- * Layout or tile size, sort and visible properties in one menu. Pass `grid` when the
- * table renders tiles so the layout switch and tile sizes appear.
- */
 export function DataTableViewOptions<T>({
     table,
     grid = false,

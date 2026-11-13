@@ -9,7 +9,6 @@ export interface PageAction {
     priority?: number
 }
 
-/** The actions shown in the top bar, highest priority first, and the rest a phone keeps in a menu. */
 export function rankActions(actions: PageAction[], mobile: boolean) {
     const sorted = [...actions].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
     return mobile

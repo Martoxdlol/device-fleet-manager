@@ -1,7 +1,6 @@
 import { createContext, useContext } from 'react'
 
 export type History = {
-    /** The path of the entry `offset` steps from the current one, when this tab has it. */
     peek(offset: number): string | undefined
     go(delta: number): void
 }

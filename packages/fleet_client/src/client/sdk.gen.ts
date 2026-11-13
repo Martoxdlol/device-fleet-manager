@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { HealthData, HealthErrors, HealthResponses, RootData, RootResponses } from './types.gen';
+import type { HealthData, HealthErrors, HealthResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -16,13 +16,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      * used to access values that aren't defined as part of the SDK function.
      */
     meta?: Record<string, unknown>;
-};
-
-export const root = <ThrowOnError extends boolean = false>(options?: Options<RootData, ThrowOnError>) => {
-    return (options?.client ?? client).get<RootResponses, unknown, ThrowOnError>({
-        url: '/',
-        ...options
-    });
 };
 
 export const health = <ThrowOnError extends boolean = false>(options?: Options<HealthData, ThrowOnError>) => {

@@ -10,7 +10,6 @@ import { useMessages } from '../../i18n/provider'
 const chunkFailure =
     /dynamically imported module|Importing a module script failed|error loading dynamically imported module/i
 
-/** A lazy chunk that is gone, as after a deploy while the tab ran the old build. */
 function isChunkLoadError(error: unknown) {
     return error instanceof TypeError && chunkFailure.test(error.message)
 }
@@ -26,11 +25,6 @@ function describe(error: unknown) {
     return error === undefined || error === null ? '' : String(error)
 }
 
-/**
- * What every error boundary shows in place of what crashed: a line and one button, or in a
- * narrow container the alert icon alone. The line or the icon opens what went wrong. Try again
- * resets the boundary; after a failed chunk load, or with nothing to reset, the button reloads.
- */
 export function ErrorBox({
     error,
     onRetry,

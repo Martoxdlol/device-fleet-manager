@@ -3,7 +3,6 @@ import { useRef, useState, type KeyboardEvent, type PointerEvent, type RefObject
 const KEY_STEP = 24
 
 interface Limits {
-    /** Pixels per unit of the size. */
     scale: number
     min: number
     max: number
@@ -11,28 +10,16 @@ interface Limits {
 
 export interface ResizeOptions {
     axis: 'x' | 'y'
-    /** Where the pane the handle sizes sits: before the handle, left or above, or after it. */
     pane: 'before' | 'after'
-    /** The committed size: pixels, or a share of `container` when one is given. */
     value: number
-    /** The least and the most the size may ever be. */
     min: number
     max: number
-    /** Where a double click on the handle returns the size. */
     reset: number
-    /** Called once a drag ends, on each arrow key and on a double click. */
     onCommit: (value: number) => void
-    /** Makes the size a share of this element's length along `axis`. */
     container?: RefObject<HTMLElement | null>
-    /** Narrows `min` and `max` to what the layout allows now, read when a drag or key press starts. */
     limits?: () => { min?: number; max?: number }
 }
 
-/**
- * Sizes a pane from a handle beside it: dragged, moved with the arrow keys, or reset with a
- * double click. The size follows the pointer while a drag lasts and is committed when it ends.
- * Moving the handle away from the pane grows it. When `limits` leave no room, `min` wins.
- */
 export function useResize({
     axis,
     pane,
@@ -75,7 +62,6 @@ export function useResize({
     const current = dragged ?? value
     const aria = (raw: number) => (share ? Math.round(raw * 100) : Math.round(raw))
     return {
-        /** The size to render: the dragged one while a drag lasts, the committed one otherwise. */
         value: current,
         props: {
             role: 'separator',

@@ -4,11 +4,6 @@ import { Button, Dialog, Field, Spinner } from '../core/ui/primitives'
 import { useMessages } from '../i18n/provider'
 import { errorMessage } from '../lib/api/errors'
 
-/**
- * Asks before something is deleted. `children` says what goes with it. With `typed`, the button
- * works only once that text is typed, for what cannot be undone. It stays open until `onConfirm`
- * settles, so a refusal can be read in place.
- */
 export function ConfirmDialog({
     title,
     label,
@@ -21,7 +16,6 @@ export function ConfirmDialog({
     title: string
     label?: string
     typed?: string
-    /** Says why it was refused; the server's message by default. */
     describe?: (error: unknown) => string
     onClose: () => void
     onConfirm: () => Promise<unknown>

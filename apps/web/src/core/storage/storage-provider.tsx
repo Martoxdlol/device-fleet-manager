@@ -1,7 +1,6 @@
 import { useMemo, type ReactNode } from 'react'
 import { StorageContext, type ViewStorage } from './storage-context'
 
-/** Keeps values in `localStorage` under `prefix`. Storage that is missing, full or blocked keeps nothing. */
 export function StorageProvider({ prefix, children }: { prefix: string; children: ReactNode }) {
     const storage = useMemo<ViewStorage>(
         () => ({
@@ -17,9 +16,7 @@ export function StorageProvider({ prefix, children }: { prefix: string; children
             write(key, value) {
                 try {
                     localStorage.setItem(prefix + key, JSON.stringify(value))
-                } catch {
-                    /* memory-only preference */
-                }
+                } catch {}
             },
         }),
         [prefix],

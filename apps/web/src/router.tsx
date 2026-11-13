@@ -14,7 +14,6 @@ const routes: RouteObject[] = [
                 Component: AppLayout,
                 children: [
                     {
-                        // Every page draws its own shell, so this keeps the rail when one fails before it does.
                         ErrorBoundary: AppErrorPage,
                         children: [
                             {

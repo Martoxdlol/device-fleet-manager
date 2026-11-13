@@ -6,7 +6,6 @@ import { useContext, type ComponentProps } from 'react'
 import { PanelSheetContext } from './panel-sheet-context'
 import { useLocale } from '../locale/locale-context'
 
-/** Shared geometry for app bars, table toolbars and panel headers. */
 export const barClasses = 'flex h-[45px] shrink-0 items-center gap-2 border-b p-1.5'
 
 export function PanelHeader({ className, children, ...props }: ComponentProps<'header'>) {
@@ -39,7 +38,6 @@ export function PanelActions({ className, ...props }: ComponentProps<'div'>) {
     )
 }
 
-/** Padding belongs inside a panel, never around its header. */
 export function PanelBody({ className, ...props }: ComponentProps<'div'>) {
     return (
         <div
@@ -49,7 +47,6 @@ export function PanelBody({ className, ...props }: ComponentProps<'div'>) {
     )
 }
 
-/** Header controls share one target size; labels may collapse on small screens. */
 export function PanelAction({
     className,
     iconOnly = false,

@@ -24,7 +24,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { useLocale } from '../locale/locale-context'
 import { useBoundary } from '../boundary/boundary-context'
 
-/** App-level composition helpers; the CLI-generated shadcn components remain untouched. */
 export function Button({
     variant = 'outline',
     className = '',
@@ -44,7 +43,6 @@ export function Badge({
     destructive = false,
     children,
 }: {
-    /** Marks something that goes away, such as a deleted field. */
     destructive?: boolean
     children: ReactNode
 }) {
@@ -64,11 +62,8 @@ export function Field({
     label: string
     children: ReactNode
     hint?: string
-    /** Why the value was refused, shown under the input. */
     error?: string
-    /** Several controls under one name, which a `<label>` would hand every click to the first of. */
     group?: boolean
-    /** Controls on the label's line, which make the field a group. */
     actions?: ReactNode
 }) {
     const id = useId()
@@ -115,7 +110,6 @@ export function Dialog({
     title: string
     description?: string
     side?: 'center' | 'right' | 'bottom'
-    /** Room for a preview or two columns, as a centered dialog. */
     wide?: boolean
     children: ReactNode
 }) {
@@ -172,7 +166,6 @@ export function Dialog({
 const emptyStateClasses =
     'flex flex-col items-center justify-center gap-3 min-h-80 p-6 text-center [&_p]:text-muted-foreground [&_p]:text-[12px] [&_p]:leading-[1.65] [&_h2]:text-[20px]'
 
-/** A state that fills its plane: empty, waiting or failed. `surface` raises it as a plane. */
 export function EmptyState({
     surface = false,
     className,
@@ -183,7 +176,6 @@ export function EmptyState({
     )
 }
 
-/** The one spinner. Its label is for screen readers only: a wait never prints text. */
 export function Spinner({ label, className }: { label?: string; className?: string }) {
     const t = useLocale().messages
     return (
@@ -197,7 +189,6 @@ export function Spinner({ label, className }: { label?: string; className?: stri
     )
 }
 
-/** Full-page spinner for the rare wait the app cannot avoid, such as a route chunk on a cold load. */
 export function PageSpinner() {
     return (
         <EmptyState>
@@ -206,7 +197,6 @@ export function PageSpinner() {
     )
 }
 
-/** Icon-only chrome carries its name on hover; the same control labelled needs no tooltip. */
 export function ChromeTip({
     label,
     enabled = true,

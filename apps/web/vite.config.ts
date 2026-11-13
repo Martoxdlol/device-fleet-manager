@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, type Plugin } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
@@ -12,18 +12,8 @@ function documentTitle(): Plugin {
     }
 }
 
-// https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
-    const root = fileURLToPath(new URL('.', import.meta.url))
-    if (command === 'build' && !loadEnv(mode, root, 'VITE_').VITE_FLEET_API_URL)
-        throw new Error('Set VITE_FLEET_API_URL to the API origin this build calls.')
-    return {
-        plugins: [
-            tailwindcss(),
-            react(),
-            babel({ presets: [reactCompilerPreset()] }),
-            documentTitle(),
-        ],
-        resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-    }
+export default defineConfig({
+    plugins: [tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] }), documentTitle()],
+    resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+    server: { proxy: { '/api': process.env.FLEET_DEV_API ?? 'http://localhost:3000' } },
 })

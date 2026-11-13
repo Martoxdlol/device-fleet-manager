@@ -1,5 +1,3 @@
-// The entry apps import core from. Where core composes a shadcn control, as `Button`, `Badge` and `Dialog`, it exports
-// core's, and the control it composes stays inside.
 export { Calendar } from './ui/calendar'
 export {
     DropdownMenu,

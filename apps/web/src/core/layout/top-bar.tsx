@@ -9,14 +9,9 @@ import { Button, ChromeTip } from '../ui/primitives'
 import type { PageAction } from './page-actions'
 import { useLocale } from '../locale/locale-context'
 
-/** Floating chrome rides in glass islands; the gaps between them stay click-through. */
 const chromeBar = 'flex h-9 shrink-0 items-center gap-1 p-0.5'
 const iconButton = 'icon-button size-8 p-0 shrink-0'
 
-/**
- * The bar over the page: the title island, the command bar centered on wide screens, and the
- * action island. Each opener shows only when its handler is given.
- */
 export function TopBar({
     title,
     titleContent,
@@ -30,17 +25,12 @@ export function TopBar({
     onOpenDetails,
 }: {
     title: string
-    /** Replaces the title, and with it the back link. */
     titleContent?: ReactNode
     back?: { href: string; label: string }
-    /** The page shows its own title in its content on wide screens, so the title bar is mobile only. */
     titleInContent: boolean
-    /** Centered in the top chrome on wide screens, ahead of the actions on mobile. */
     commandBar?: ReactNode
-    /** Search and filters for the current list, in the action island ahead of the actions. */
     toolbar?: ReactNode
     actions: PageAction[]
-    /** Opens the left panel's sheet on a phone, or hides and shows the panel beside the page. */
     navigationButton?: { label: string; onSelect: () => void }
     onMoreActions?: () => void
     onOpenDetails?: () => void

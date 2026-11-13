@@ -20,7 +20,6 @@ export function actionContext<T>(
     }
 }
 
-/** The actions that show there and apply to the context, each with why it cannot run now. */
 export function resolveActions<T>(
     actions: readonly DataTableActionDef<T>[],
     context: DataTableActionContext<T>,

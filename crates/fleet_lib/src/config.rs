@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use thiserror::Error;
 use url::Url;
 
@@ -43,6 +45,7 @@ pub struct Config {
     pub bind: String,
     pub app_url: String,
     pub cors_origins: Vec<String>,
+    pub web_dir: Option<PathBuf>,
 }
 
 impl Config {
@@ -80,6 +83,7 @@ impl Config {
             bind: var("FLEET_BIND").unwrap_or_else(|| DEFAULT_BIND.to_string()),
             app_url,
             cors_origins,
+            web_dir: var("FLEET_WEB_DIR").map(PathBuf::from),
         })
     }
 }

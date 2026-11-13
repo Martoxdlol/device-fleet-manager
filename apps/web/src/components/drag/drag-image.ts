@@ -1,8 +1,3 @@
-/**
- * The browser's drag image is a snapshot of the dragged element, which for a full width table
- * row is a smear of empty cells. This draws a chip instead and removes it a frame later, once
- * the browser has taken its picture.
- */
 export function chipDragImage(transfer: DataTransfer, label: string, count: number) {
     const chip = document.createElement('div')
     chip.className =

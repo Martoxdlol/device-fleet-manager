@@ -5,7 +5,6 @@ import { ThemeContext } from './theme-context'
 
 const themes = oneOf(['light', 'dark'])
 
-/** Light or dark, light by default, remembered per browser. Dark is the `dark` class on `<html>`. */
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useStoredState('theme', 'light', themes)
     useEffect(() => {

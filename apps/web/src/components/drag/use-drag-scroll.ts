@@ -4,12 +4,6 @@ import { SILENCE } from './drag-model'
 const EDGE = 52
 const MAX_STEP = 18
 
-/**
- * A drag near the top or bottom edge scrolls the element under it. Native drag fires no
- * pointer events and stops firing `dragover` when the cursor holds still, so the scroll runs
- * on its own frames. Attach in the capture phase: a target that stops propagation still needs
- * the list to keep moving underneath it.
- */
 export function useDragScroll(element: RefObject<HTMLElement | null>) {
     const speed = useRef(0)
     const frame = useRef(0)

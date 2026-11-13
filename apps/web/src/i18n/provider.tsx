@@ -13,12 +13,6 @@ interface I18n {
 
 const I18nContext = createContext<I18n | null>(null)
 
-/**
- * The text and formats of `language` for everything below. A nested provider overrides the one
- * above it: the browser's language at the root, the account's under the session, the demo's in
- * the demo. Until a language's catalog first loads it renders nothing; after that a change
- * keeps the old text until the new catalog is ready.
- */
 export function LanguageProvider({
     language,
     children,
@@ -79,10 +73,8 @@ function useI18n() {
     return value
 }
 
-/** The active catalog: `const t = useMessages()`, then `t.data.rows(count)`. */
 export const useMessages = () => useI18n().messages
 
-/** Dates, numbers, sizes, durations, lists and sorting in the active formatting locale. */
 export const useFormat = () => useI18n().format
 
 export const useLanguage = () => useI18n().language

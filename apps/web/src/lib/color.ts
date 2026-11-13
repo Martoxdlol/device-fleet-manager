@@ -1,6 +1,5 @@
 import { channels } from '../core/color/color'
 
-/** The swatches of the color picker. A new organization gets one of them at random. */
 export const ORG_COLORS = [
     { hex: '#b14d51', name: 'red' },
     { hex: '#a16100', name: 'amber' },
@@ -12,12 +11,10 @@ export const ORG_COLORS = [
     { hex: '#9e518f', name: 'pink' },
 ] as const
 
-/** A banner's background: `fill` across the left, fading into the card. */
 export function toneBackground(fill: string) {
     return `linear-gradient(100deg in oklab, ${fill} 0%, ${fill} 35%, var(--card) 85%)`
 }
 
-/** Hue in degrees, saturation and value from 0 to 1. */
 export interface Hsv {
     h: number
     s: number

@@ -1,4 +1,3 @@
-/** What shows in place of a part of the screen that crashed. */
 export const errors = {
     title: 'Error',
     somethingWentWrong: 'Something went wrong',

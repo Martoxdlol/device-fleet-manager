@@ -17,7 +17,6 @@ name = "gen-openapi"
 path = "src/bin/gen_openapi.rs"
 
 [dependencies]
-fleet_brand.workspace = true
 fleet_i18n = { workspace = true, features = ["schema"] }
 fleet_lib.workspace = true
 axum.workspace = true

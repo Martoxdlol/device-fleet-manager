@@ -6,17 +6,18 @@ A device fleet manager: an agent runs on Windows and Linux machines as SYSTEM or
 
 - Organization > Fleet > Device.
 - Org roles: `owner`, `admin`, `member`. Owners and admins have admin on every fleet.
-- Members get access per fleet, directly or through groups. Levels: `view < operate < admin`.
-  - `view`: inventory, telemetry, history.
-  - `operate`: run commands, terminals.
-  - `admin`: enrollment tokens, fleet settings, removing devices.
+- Fleet grants give a user or a group `read`, `write` or `admin` on a fleet.
+  - `read`: inventory, telemetry, history.
+  - `write`: run commands, terminals, edit devices.
+  - `admin`: enrollment tokens, the fleet's key, fleet settings, removing devices.
+- Groups are basic: an org's named list of members. A grant to a group applies to its members.
 - Access is additive, no deny rules. Non-members and invisible resources answer 404.
 
 ## Data planes
 
 As in Temblo, so the hosted service can shard later:
 
-- Control plane: users, sessions, organizations, members, groups, fleets, fleet grants.
+- Control plane: users, sessions, organizations, members, groups, agent keys, fleets, fleet grants.
 - Fleet plane: devices and everything about them (telemetry, sessions, commands, events). Every key leads with `fleet_id`; foreign keys are composite; nothing references upward except `fleets`.
 
 ## Server
@@ -25,6 +26,7 @@ As in Temblo, so the hosted service can shard later:
 - `crates/fleet_lib`: config, database, migrations, repositories, models, auth, access, pagination.
 - `crates/fleet_server`: HTTP handlers, error envelope, request ids, OpenAPI document, agent gateway.
 - `packages/fleet_client`: TypeScript client generated from the OpenAPI document. `bun run codegen` regenerates both; a test fails when the committed document is stale.
+- One container serves everything: the API under `/api`, `/health`, and the console for every other path (`FLEET_WEB_DIR`). The console calls the API on its own origin; in development Vite proxies `/api` to the server.
 - API conventions follow Temblo's `docs/http-api.md`: `/api/v1`, uuid v7 ids in the API, slugs only in browser URLs, `{items, next_cursor}` pages, one JSON error envelope localized by `Accept-Language`.
 
 ## Login
@@ -38,15 +40,15 @@ As in Temblo, so the hosted service can shard later:
 Goal: whoever controls DNS, or gets a certificate from any trusted CA, must not be able to control agents.
 
 - HTTPS is its own layer with its own certificate (public CA, the operator's proxy, anything). It is never trusted for agent identity and shares no key with what follows.
-- Each fleet has its own X25519 key pair, the fleet key. Its private key is stored encrypted under the server master key (`FLEET_MASTER_KEY`); the database alone cannot impersonate the server.
-- An enrollment token carries the server URL, the fleet id, the fleet public key and a one-time secret. The agent pins the fleet id and fleet public key at enrollment.
+- Agent keys belong to an organization: an org creates one or many X25519 key pairs, and each fleet chooses which one it uses. Private keys are stored encrypted under the server master key (`FLEET_MASTER_KEY`); the database alone cannot impersonate the server.
+- An enrollment token carries the server URL, the fleet id, the fleet's key and a one-time secret. The agent pins the key at enrollment.
 - Each agent creates its own X25519 key pair on first run. The private key never leaves the machine (file readable only by SYSTEM or root). The server stores only the public key.
-- Inside the WebSocket, agent and server run a Noise `IK` handshake (`snow` crate): the agent already knows the fleet public key, the server learns and checks the agent key. Everything after the handshake is encrypted and authenticated end to end between the agent process and the server process, whatever terminates TLS in between.
-- An attacker with a hijacked DNS name and a valid TLS certificate gets a TLS connection and nothing else: the handshake needs the fleet private key.
-- Rotation: a new fleet public key is announced inside the channel, the agent accepts it for its next connection, the old one stays valid for a grace period. Moving a device to another fleet works the same way.
+- Inside the WebSocket, agent and server run a Noise `IK` handshake (`snow` crate): the agent already knows the key it pinned, the server learns and checks the agent key. Everything after the handshake is encrypted and authenticated end to end between the agent process and the server process, whatever terminates TLS in between.
+- An attacker with a hijacked DNS name and a valid TLS certificate gets a TLS connection and nothing else: the handshake needs the private key.
+- Changing keys: when a fleet switches to another key, or a device moves to a fleet with another key, the new public key is announced inside the channel, signed into it by the current one, and the agent uses it from its next connection. The old key stays valid for a grace period. Devices moving between fleets that share a key change nothing.
 - Agent updates are signed with a separate release key, checked by the agent before installing.
-- Losing the master key makes every fleet key unusable and every agent must enroll again. Back it up.
-- Not covered: an attacker who takes over the server itself. A later option is commands signed by an admin's passkey, checked by the agent against an admin list signed by the fleet key.
+- Losing the master key makes every agent key unusable and every agent must enroll again. Back it up.
+- Not covered: an attacker who takes over the server itself. A later option is commands signed by an admin's passkey, checked by the agent against an admin list signed by its key.
 
 ## Server instances
 

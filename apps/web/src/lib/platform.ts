@@ -1,9 +1,7 @@
 import type { KeyBinding } from '../core/keyboard/keyboard-context'
 
-/** Apple platforms put Command and Option where others put Ctrl and Alt. */
 export const apple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
-/** The names a key is written with where the platform spells it out. */
 export interface KeyNames {
     enter: string
     delete: string
@@ -18,7 +16,6 @@ const symbols: Record<string, string> = {
     Backspace: '⌫',
 }
 
-/** A key as the platform's menus write it: ⌘⌫ on macOS, Ctrl+X or Del elsewhere. */
 export function keyLabel(binding: KeyBinding, names: KeyNames) {
     const key =
         binding.key === 'Enter'

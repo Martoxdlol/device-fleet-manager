@@ -66,12 +66,18 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         None => tracing::info!("CORS disabled: no allowed origins configured"),
     }
 
+    let web_dir = config.web_dir.clone();
+    match &web_dir {
+        Some(dir) => tracing::info!(dir = %dir.display(), "serving the web console"),
+        None => tracing::info!("FLEET_WEB_DIR unset; not serving the web console"),
+    }
+
     let listener = TcpListener::bind(&config.bind).await?;
     tracing::info!(addr = %listener.local_addr()?, "listening");
 
     let (stop, stopping) = tokio::sync::oneshot::channel::<()>();
     let mut serving = tokio::spawn(async move {
-        axum::serve(listener, app(state, cors))
+        axum::serve(listener, app(state, cors, web_dir.as_deref()))
             .with_graceful_shutdown(async move {
                 let _ = stopping.await;
             })

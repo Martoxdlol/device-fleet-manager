@@ -2,18 +2,6 @@ import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { DragContext, type DragSession } from './drag-context'
 import { SILENCE, fromComputer } from './drag-model'
 
-/**
- * The running drag, held in a ref. `dataTransfer` is in protected mode until the drop, so a
- * target hovering a drag can read its types and nothing else: the payload has to live here.
- *
- * A drag can outlive its source: a spring that opens another folder unmounts the row it started
- * on, and `dragend` then fires on a detached node that never reaches React. The window still
- * sees every drop, so the session also ends there, once the targets have read it.
- *
- * The drag image is a snapshot taken when the drag starts, so it cannot follow the copy key.
- * Below it sits a label saying what dropping here would do, redrawn each frame from what the
- * target under the pointer reported during the last `dragover`, and hidden over a refusal.
- */
 export function DragProvider({ children }: { children: ReactNode }) {
     const active = useRef<{ type: string; payload: unknown } | null>(null)
     const hint = useRef<string | null>(null)
@@ -51,7 +39,6 @@ export function DragProvider({ children }: { children: ReactNode }) {
             finish()
             setTimeout(() => (active.current = null))
         }
-        // A file that reaches the window no target took: refused, so the tab never opens it.
         const stray = (event: DragEvent) => {
             if (!event.dataTransfer || !fromComputer(event.dataTransfer) || event.defaultPrevented)
                 return

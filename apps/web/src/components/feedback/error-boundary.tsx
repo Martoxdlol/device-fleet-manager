@@ -17,7 +17,6 @@ interface CatcherState {
     locationKey: string
 }
 
-/** Holds a crash until Try again or a navigation, so a healthy subtree is never remounted. */
 class Catcher extends Component<CatcherProps, CatcherState> {
     state: CatcherState = { failed: false, error: undefined, locationKey: this.props.locationKey }
 
@@ -39,10 +38,6 @@ class Catcher extends Component<CatcherProps, CatcherState> {
     }
 }
 
-/**
- * Contains a crash below it to the part of the screen it wraps (docs/client-telemetry-design.md).
- * `name` says which part, for the error reports that design adds.
- */
 export function ErrorBoundary({
     children,
 }: {
@@ -53,7 +48,6 @@ export function ErrorBoundary({
     return <Catcher locationKey={location.key}>{children}</Catcher>
 }
 
-/** In place of everything under the router: no theme, chrome or session from below it. */
 export function RootErrorPage() {
     const error = useRouteError()
     const { revalidate } = useRevalidator()
@@ -64,7 +58,6 @@ export function RootErrorPage() {
     )
 }
 
-/** In place of a page that failed before it drew its shell, or whose chunk did not load. */
 export function AppErrorPage() {
     const error = useRouteError()
     const t = useMessages().errors

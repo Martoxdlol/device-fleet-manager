@@ -4,8 +4,6 @@ import { AppFrameContext } from '../scaffold/app-frame-context'
 import { spacingVariables, useSpacing } from '../scaffold/spacing-context'
 import { PanelSheetContext } from './panel-sheet-context'
 
-/** The desktop side panel as a sheet: no chrome of its own, the panel header closes it. It opens
- * inside the app area, so it covers the page and never the column docked beside it. */
 export function PanelSheet({
     open,
     onClose,

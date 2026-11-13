@@ -16,7 +16,6 @@ import { TopBar } from './top-bar'
 import { useLocale } from '../locale/locale-context'
 import { useBoundary } from '../boundary/boundary-context'
 
-/** The navigation panel's width in pixels, one for every page, and the least the page keeps beside it. */
 const LEFT_WIDTH = 248
 const LEFT_MIN = 200
 const LEFT_MAX = 480
@@ -32,29 +31,19 @@ export interface ShellConfig {
     navigation: NavItem[]
     mobileNavLimit?: number
     leftPanel?: ReactNode
-    /** Hides and shows the left panel on wide screens, as the panel button does. `keys` names it. */
     leftShortcut?: { binding: KeyBinding; keys: string }
     rightPanel?: ReactNode
     actions?: PageAction[]
-    /** Search and filters for the current list, in the action island ahead of the actions. */
     toolbar?: ReactNode
     initialPanel?: 'left' | 'right'
-    /** Mobile only. Unset renders the default navigation, false hides it, an element takes its slot. */
     bottomNav?: ReactNode
-    /** The page shows its own title in its content on wide screens, so the title bar is mobile only. */
     titleInContent?: boolean
     railHeader?: ReactNode
     railFooter?: ReactNode
     mobileMenu?: ReactNode
-    /** Centered in the top chrome on wide screens, ahead of the actions on mobile. */
     commandBar?: ReactNode
 }
 
-/**
- * The rail, the top bar and the side panels around a page, and on a phone the bottom
- * navigation, the panel sheets and the overflow menus. It owns which of those is open. Direct
- * composition avoids effect-driven page registries. Route boundaries reset transient panels.
- */
 export function AppShell({
     title,
     titleContent,
@@ -87,7 +76,6 @@ export function AppShell({
     const [panel, setPanel] = useState<'left' | 'right' | 'more' | 'actions' | null>(
         initialPanel ?? null,
     )
-    // Crossing a presentation boundary dismisses obsolete modal state instead of reopening it later.
     const [presentation, setPresentation] = useState({ mobile, inspectorSheet })
     if (presentation.mobile !== mobile || presentation.inspectorSheet !== inspectorSheet) {
         setPresentation({ mobile, inspectorSheet })

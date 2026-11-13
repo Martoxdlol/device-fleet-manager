@@ -1,7 +1,6 @@
 import { useEffect, useRef, type KeyboardEvent, type PointerEvent } from 'react'
 import { GripVertical } from 'lucide-react'
 
-/** How close to the viewport's edge, in pixels, a drag scrolls it, and how fast at the edge. */
 const EDGE = 48
 const SPEED = 14
 
@@ -17,12 +16,6 @@ type Drag = {
     source: HTMLElement | null
 }
 
-/**
- * The handle of a table row that keeps a manual order: a drag by mouse, touch or pen moves the
- * row to where it is dropped among the rows drawn, the table scrolling near its edges, and the
- * arrow keys move it one place. `ids` are the rows in their order; `onMove` gets the moved row
- * and the row whose place it takes, as an array move does.
- */
 export function RowReorderHandle({
     id,
     ids,
@@ -103,7 +96,6 @@ export function RowReorderHandle({
         if (!viewport || from < 0) return
         event.preventDefault()
         event.stopPropagation()
-        // Focus keeps its row drawn while the table scrolls it out of view.
         event.currentTarget.focus({ preventScroll: true })
         event.currentTarget.setPointerCapture(event.pointerId)
         const line = document.createElement('div')

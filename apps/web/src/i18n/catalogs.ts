@@ -13,7 +13,6 @@ const importers: Record<Language, () => Promise<Loaded>> = {
     es: () => import('./es').then(({ es, calendar }) => ({ messages: es, calendar })),
 }
 
-/** Each language's catalog, loaded on first use and kept. Made once in `main.tsx`. */
 export function createCatalogs() {
     const loaded = new Map<Language, Loaded>()
     const pending = new Map<Language, Promise<Loaded>>()

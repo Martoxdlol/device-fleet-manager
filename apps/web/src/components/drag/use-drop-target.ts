@@ -3,10 +3,6 @@ import { useMessages } from '../../i18n/provider'
 import { DragContext } from './drag-context'
 import { dropDecision, hintOf, land, type DropSpec } from './drag-model'
 
-/**
- * One drop target. Pass no spec and it accepts nothing, so a component can offer dropping
- * without every caller having to. `files` says the drag over it comes from the computer.
- */
 export function useDropTarget(spec?: DropSpec) {
     const [over, setOver] = useState(false)
     const [files, setFiles] = useState(false)

@@ -4,22 +4,6 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
-export type RootData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/';
-};
-
-export type RootResponses = {
-    /**
-     * Server is up
-     */
-    200: string;
-};
-
-export type RootResponse = RootResponses[keyof RootResponses];
-
 export type HealthData = {
     body?: never;
     path?: never;

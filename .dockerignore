@@ -1,6 +1,5 @@
 target
-node_modules
-apps
-packages
+**/node_modules
+**/dist
 .env
 .git

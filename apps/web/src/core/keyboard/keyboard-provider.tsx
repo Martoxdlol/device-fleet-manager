@@ -8,7 +8,6 @@ function edits(event: KeyboardEvent) {
     return event.key.length === 1 || event.key === 'Enter' || event.key === 'Backspace'
 }
 
-/** Text entry keeps its own keys, and an open menu or list handles them first. */
 function typing(target: EventTarget | null) {
     return (
         target instanceof HTMLElement &&
@@ -18,12 +17,6 @@ function typing(target: EventTarget | null) {
     )
 }
 
-/** Android reports an empty code for on-screen keys. iOS reports the same values for both keyboards,
- * but its on-screen keyboard releases each key within a few milliseconds of pressing it.
- *
- * Bound shortcuts run in the capture phase, ahead of element handlers, and the latest binding of a
- * key wins. A late binding runs in the bubble phase instead, once whatever handled the key first
- * had the chance to claim it. */
 export function KeyboardProvider({ children }: { children: ReactNode }) {
     const holds = useRef<number[]>([])
     const bindings = useRef<{ binding: KeyBinding; run: () => void }[]>([])

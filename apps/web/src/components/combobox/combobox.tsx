@@ -18,7 +18,6 @@ import { filterItems, groupItems } from './model'
 import type { ComboboxProps, MultiComboboxProps } from './types'
 import { useMessages } from '../../i18n/provider'
 
-/** Scrolls the list to an option, by its place among the options. */
 type Scroller = { scrollToOption: (index: number) => void }
 type Row<T> = { group: string } | { item: T; index: number }
 type Shared<T> = Omit<ComboboxProps<T>, 'value' | 'onValueChange'>
@@ -45,7 +44,7 @@ function OptionList<T>({
     scrollerRef: RefObject<Scroller | null>
     listRef: RefObject<HTMLDivElement | null>
 }) {
-    'use no memo' // TanStack Virtual owns mutable measurements, as in DataTable.
+    'use no memo'
     const t = useMessages()
     const text = ownText ?? t.components.combobox
     const emptyState = ownEmptyState ?? t.components.combobox.empty
@@ -247,11 +246,9 @@ function OptionList<T>({
     )
 }
 
-/** A single-select, searchable combobox with virtualized cursor pagination. */
 export function Combobox<T>({ value, onValueChange, ...props }: ComboboxProps<T>) {
     return <Picker {...props} selection={{ multiple: false, value, onValueChange }} />
 }
-/** Several options at once: a pick adds or removes one, and the popup stays open. */
 export function MultiCombobox<T>({ value, onValueChange, ...props }: MultiComboboxProps<T>) {
     return <Picker {...props} selection={{ multiple: true, value, onValueChange }} />
 }
@@ -295,7 +292,6 @@ function Picker<T>({ selection, ...props }: Shared<T> & { selection: Selection<T
         [items, search, getItemLabel, getItemGroup, filter],
     )
     const value = selection.multiple ? null : selection.value
-    // The chosen options stay known to the root while the loaded pages leave them out.
     const knownItems = useMemo(() => {
         const chosen = selection.multiple
             ? selection.value

@@ -10,7 +10,6 @@ export function uniqueRows<T>(
     pages: readonly { rows: readonly T[] }[],
     getRowId: (row: T) => string,
 ): T[] {
-    // Overlapping cursor pages retain order but use the latest version of a row.
     const rows = new Map<string, T>()
     for (const page of pages) for (const row of page.rows) rows.set(getRowId(row), row)
     return [...rows.values()]
@@ -22,7 +21,6 @@ export function validateNextCursor(next: string | null, used: readonly (string |
     return next
 }
 
-/** Requires the application's QueryClientProvider. Spread the result into Combobox. */
 export function useComboboxData<T>({
     queryKey,
     fetchPage,
@@ -74,7 +72,6 @@ export function useComboboxData<T>({
     const awaitingResults = search !== serverSearch || query.isPlaceholderData || !query.data
     const pages = query.data?.pages ?? (retained?.scope === scope ? retained.pages : EMPTY_PAGES)
     const loaded = useMemo(() => uniqueRows(pages, getItemId), [pages, getItemId])
-    // Server results are authoritative, including fuzzy matches the local filter cannot find.
     const items = useMemo(
         () => (awaitingResults ? filterItems(loaded, search, getItemLabel, filter) : loaded),
         [loaded, awaitingResults, search, getItemLabel, filter],

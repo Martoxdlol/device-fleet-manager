@@ -5,8 +5,6 @@ export interface Forms<T> {
     other: T
 }
 
-/** `one` or `other` by the language's plural rules. Spanish's `many`, for multiples of a
- * million, reads as `other`. */
 export function pluralFor(language: Language) {
     const rules = new Intl.PluralRules(language)
     return <T>(count: number, forms: Forms<T>): T =>

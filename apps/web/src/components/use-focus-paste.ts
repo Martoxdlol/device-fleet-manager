@@ -2,10 +2,6 @@ import { useEffect, useRef, type RefObject } from 'react'
 
 const field = 'input, textarea, select, [contenteditable=true]'
 
-/**
- * The browser's paste while focus is inside `area` and not in a field. Firefox sends a paste
- * outside a field to the body, so the focus, not the event's target, says where it belongs.
- */
 export function useFocusPaste(
     area: RefObject<HTMLElement | null>,
     onPaste: ((event: ClipboardEvent) => void) | undefined,

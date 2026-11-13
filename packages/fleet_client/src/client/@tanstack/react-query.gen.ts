@@ -3,8 +3,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { health, type Options, root } from '../sdk.gen';
-import type { HealthData, RootData } from '../types.gen';
+import { health, type Options } from '../sdk.gen';
+import type { HealthData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -39,23 +39,6 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
     return [
         params
     ];
-};
-
-export const rootQueryKey = (options?: Options<RootData>) => createQueryKey('root', options);
-
-export const rootOptions = (options?: Options<RootData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await root({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: rootQueryKey(options)
-    });
 };
 
 export const healthQueryKey = (options?: Options<HealthData>) => createQueryKey('health', options);

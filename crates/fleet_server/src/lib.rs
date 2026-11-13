@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::time::Duration;
 
 use axum::Router;
@@ -5,10 +6,12 @@ use axum::extract::{DefaultBodyLimit, State};
 use axum::http::header::InvalidHeaderValue;
 use axum::http::{HeaderName, HeaderValue, Method, StatusCode, header};
 use axum::response::{IntoResponse, Response};
+use axum::routing::any;
 use fleet_lib::AppContext;
 use sqlx::PgPool;
 use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::cors::{AllowOrigin, CorsLayer};
+use tower_http::services::{ServeDir, ServeFile};
 use tower_http::trace::TraceLayer;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 use utoipa::{Modify, OpenApi};
@@ -23,6 +26,7 @@ pub mod trace;
 #[cfg(test)]
 mod tests;
 
+const API_PREFIX: &str = "/api";
 pub const API_V1_PREFIX: &str = "/api/v1";
 
 const MAX_JSON_BODY: usize = 1024 * 1024;
@@ -58,15 +62,21 @@ impl Modify for BearerScheme {
 
 pub fn build_router() -> OpenApiRouter<AppState> {
     OpenApiRouter::with_openapi(ApiDoc::openapi())
-        .routes(routes!(root))
         .routes(routes!(health))
         .nest(API_V1_PREFIX, handlers::router())
 }
 
-pub fn app(state: AppState, cors: Option<CorsLayer>) -> Router {
+pub fn app(state: AppState, cors: Option<CorsLayer>, web: Option<&Path>) -> Router {
     let (router, _) = build_router().split_for_parts();
+    let router = router
+        .route(API_PREFIX, any(route_not_found))
+        .route(&format!("{API_PREFIX}/{{*rest}}"), any(route_not_found));
+    let router = match web {
+        Some(dir) => router
+            .fallback_service(ServeDir::new(dir).fallback(ServeFile::new(dir.join("index.html")))),
+        None => router.fallback(route_not_found),
+    };
     let api = router
-        .fallback(route_not_found)
         .method_not_allowed_fallback(method_not_allowed)
         .with_state(state)
         .layer(DefaultBodyLimit::max(MAX_JSON_BODY))
@@ -154,11 +164,6 @@ fn is_localhost_origin(origin: &HeaderValue) -> bool {
         None => host_port.split(':').next().unwrap_or(host_port),
     };
     matches!(host, "localhost" | "127.0.0.1" | "::1")
-}
-
-#[utoipa::path(get, path = "/", responses((status = OK, description = "Server is up", body = String)))]
-async fn root() -> &'static str {
-    fleet_brand::NAME
 }
 
 #[utoipa::path(

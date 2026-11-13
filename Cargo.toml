@@ -1,19 +1,18 @@
 [workspace]
 resolver = "3"
-members = ["crates/fleet_brand", "crates/fleet_i18n", "crates/fleet_lib", "crates/fleet_server"]
+members = ["crates/fleet_i18n", "crates/fleet_lib", "crates/fleet_server"]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
 
 [workspace.dependencies]
-fleet_brand = { path = "crates/fleet_brand" }
 fleet_i18n = { path = "crates/fleet_i18n" }
 fleet_lib = { path = "crates/fleet_lib" }
 axum = { version = "0.8", features = ["http2", "ws"] }
 tokio = { version = "1", features = ["full"] }
 tower = { version = "0.5", features = ["util"] }
-tower-http = { version = "0.7", features = ["trace", "cors", "catch-panic"] }
+tower-http = { version = "0.7", features = ["trace", "cors", "catch-panic", "fs"] }
 sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls-ring-webpki", "postgres", "uuid", "time", "json", "migrate", "macros", "derive"] }
 utoipa = "6"
 utoipa-axum = "0.3"

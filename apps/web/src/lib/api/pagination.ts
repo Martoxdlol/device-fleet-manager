@@ -1,17 +1,11 @@
 import type { InfiniteData, QueryClient, QueryKey } from '@tanstack/react-query'
 
-/** Generated infinite-query options leave the API's cursor policy to the consumer. */
 export function nextCursor(page: { next_cursor?: string | null }) {
     return page.next_cursor ?? undefined
 }
 
 type Listing<T> = InfiniteData<{ items: T[]; next_cursor?: string | null }, unknown>
 
-/**
- * Writes a resource the server answered with into its cached list: in place when it is listed,
- * otherwise after the last row, since lists run in creation order. A list with pages still to
- * load leaves a new resource for the page that brings it.
- */
 export function seedListItem<T extends { id: string }>(
     cache: QueryClient,
     queryKey: QueryKey,
@@ -36,7 +30,6 @@ export function seedListItem<T extends { id: string }>(
     })
 }
 
-/** Takes a deleted resource out of its cached list. */
 export function dropListItem(cache: QueryClient, queryKey: QueryKey, id: string) {
     cache.setQueryData<Listing<{ id: string }>>(
         queryKey,

@@ -57,21 +57,14 @@ function MeasuredSlot({
 }
 
 export interface SideSize {
-    /** The width the side asks for, in pixels. */
     width: number
     min: number
     max: number
-    /** Where a double click on the handle returns the width. */
     reset: number
     onResize: (width: number) => void
-    /** Names the handle, such as "Resize navigation panel". */
     label: string
 }
 
-/**
- * A side panel the user sizes from a handle in the gap on its inner edge. It gives up width,
- * down to its `min`, while the main content would fall below `mainMin`.
- */
 function ResizableSide({
     side,
     size,
@@ -120,11 +113,6 @@ function ResizableSide({
     )
 }
 
-/**
- * Measures outer chrome. Side panels and page content share one bounded row, where a side the
- * user can size takes width from the main content until it reaches `mainMin`. A hidden side
- * stays mounted, so it keeps its state, and gives the main content its width.
- */
 export function Scaffold({
     fixed = {},
     floating = {},
@@ -196,7 +184,6 @@ export function Scaffold({
                         sides.map((side) => {
                             if (kind === 'floating' && (side === 'left' || side === 'right'))
                                 return null
-                            // A stacked page owns the frame: its own bar replaces the floating chrome.
                             const child =
                                 covered && kind === 'floating'
                                     ? null
@@ -232,7 +219,6 @@ export function Scaffold({
         </ScaffoldContext>
     )
 }
-/** The scaffold owns placement. Pages choose who scrolls, without viewport arithmetic. */
 export function PageContent({
     mode = 'scroll',
     width = 'full',
@@ -251,8 +237,6 @@ export function PageContent({
             data-page-scroll={mode === 'scroll' ? 'page' : 'content'}
             className={cn(
                 'flex min-h-0 min-w-0 flex-1 flex-col outline-none',
-                // Layout containers constrain size; only surfaces clip. Clipping here would sit
-                // flush with the cards inside and cut every one of their shadows off square.
                 mode === 'scroll' ? 'overflow-auto overscroll-contain [scrollbar-width:thin]' : '',
                 className,
             )}

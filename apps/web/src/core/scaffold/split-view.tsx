@@ -34,19 +34,11 @@ export function SplitDetailHeader({
     )
 }
 
-/** The least and the most of the width the detail takes, whatever the container's. */
 const BOUNDS: [number, number] = [0.2, 0.8]
 
 const parseFraction = (raw: unknown) =>
     typeof raw === 'number' && raw >= BOUNDS[0] && raw <= BOUNDS[1] ? raw : undefined
 
-/**
- * List/detail split with a draggable divider. The detail pane and its stacked presentation are
- * the same element wearing different classes, so a resize never remounts an open editor. On
- * narrow viewports the open detail stacks over the content area, and the scaffold hands it the
- * frame: its own bar is the only chrome on screen. The divider occupies the layout gap, so
- * opening the detail never shifts the list.
- */
 export function SplitView({
     list,
     detail,
@@ -64,23 +56,11 @@ export function SplitView({
     detail: ReactNode | null
     detailTitle: string
     detailHeader?: boolean
-    /** Actions in the detail's own header, beside its close button. */
     detailActions?: ReactNode
-    /**
-     * Fills the detail pane on wide screens while nothing is selected. Narrow screens keep the
-     * pane closed until there is a detail, so it never stacks over the list empty.
-     */
     emptyDetail?: ReactNode
-    /**
-     * The detail alone, filling the width in place. It keeps its place in the tree, so showing
-     * the list again does not remount it.
-     */
     listHidden?: boolean
-    /** A retained editor can be hidden while a child collection occupies its place. */
     active?: boolean
-    /** Share of the width the detail pane takes until the user drags the divider. */
     defaultDetailFraction?: number
-    /** Remember the divider position per browser under this name. */
     storageKey?: string
     onClose: () => void
 }) {

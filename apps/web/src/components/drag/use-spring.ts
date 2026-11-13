@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react'
 import { SILENCE, SPRING_DELAY } from './drag-model'
 
-/**
- * A control that acts on a drag resting on it instead of taking the drop: `onSpring` runs every
- * SPRING_DELAY while a drag of `type` stays. Without `onSpring` it ignores drags.
- */
 export function useSpring(type: string, onSpring?: () => void) {
     const [over, setOver] = useState(false)
     const seen = useRef(0)

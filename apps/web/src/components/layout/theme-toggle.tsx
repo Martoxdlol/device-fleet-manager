@@ -3,7 +3,6 @@ import { Button, ChromeTip } from '../../core/ui/primitives'
 import { Icon } from '../../core/ui/icon'
 import { useMessages } from '../../i18n/provider'
 
-/** Switches between the light and dark theme. `expanded` is the labelled menu row. */
 export function ThemeToggle({ expanded = false }: { expanded?: boolean }) {
     const { theme, setTheme } = useTheme()
     const t = useMessages().components.account

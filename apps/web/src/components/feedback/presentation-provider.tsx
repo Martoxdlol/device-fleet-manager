@@ -7,7 +7,6 @@ import { PresentationContext, type NoticeAction } from './presentation-context'
 
 type Notice = { message: string; tone?: 'error'; action?: NoticeAction; open: boolean }
 
-/** The app's notices: one toast at a time. */
 export function PresentationProvider({ children }: { children: ReactNode }) {
     const t = useMessages()
     const [notice, setNotice] = useState<Notice>({ message: '', open: false })
