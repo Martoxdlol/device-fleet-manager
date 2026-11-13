@@ -1,5 +1,5 @@
 import { brandName } from '../../brand'
-import { AppLink } from '../../routing/app-link'
+import { AppLink } from '../../auth/app-link'
 import { useMessages } from '../../i18n/provider'
 
 export function Brand({ home = '/' }: { home?: string }) {

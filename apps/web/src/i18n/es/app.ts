@@ -5,4 +5,9 @@ export const app = {
     commandBar: {
         placeholder: 'Buscar',
     },
+    route: {
+        title: 'Organización',
+        back: 'Volver a las organizaciones',
+        opening: 'Abriendo',
+    },
 } satisfies Shape<typeof en>

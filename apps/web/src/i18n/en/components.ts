@@ -74,11 +74,30 @@ export const components = {
         toDark: 'Switch to dark theme',
         toLight: 'Switch to light theme',
         appearance: 'Appearance',
+        menu: 'Account menu',
+        profile: 'Your profile',
+        admin: 'Administration',
+        signOut: 'Sign out',
     },
     brand: {
         home: (name: string) => `${name} home`,
     },
     navigation: {
-        home: 'Home',
+        organizations: 'Organizations',
+        fleets: 'Fleets',
+    },
+    orgSwitcher: {
+        organizations: 'Organizations',
+        menu: 'Organization menu',
+        menuOf: (name: string) => `Organization menu, ${name}`,
+        loading: 'Loading organizations',
+        failed: "Couldn't load organizations",
+        moreFailed: "Couldn't load more organizations",
+    },
+    forms: {
+        url: 'URL',
+        editUrl: (url: string) => `Edit URL ${url}`,
+        editUrlTip: 'Edit URL',
+        slugHint: 'Lowercase letters and numbers, joined by single hyphens.',
     },
 }

@@ -52,6 +52,8 @@ import {
     RotateCcw,
     Eye,
     Lock,
+    Copy,
+    KeyRound,
     createLucideIcon,
     type LucideProps,
 } from 'lucide-react'
@@ -146,6 +148,8 @@ const icons = {
     retry: RotateCcw,
     eye: Eye,
     lock: Lock,
+    copy: Copy,
+    key: KeyRound,
 }
 export type IconName = keyof typeof icons
 export function Icon({ name, ...props }: LucideProps & { name: IconName }) {

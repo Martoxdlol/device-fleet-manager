@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import type { InfiniteData, QueryClient, QueryKey } from '@tanstack/react-query'
 
 export function nextCursor(page: { next_cursor?: string | null }) {
@@ -42,4 +43,27 @@ export function dropListItem(cache: QueryClient, queryKey: QueryKey, id: string)
                 })),
             },
     )
+}
+
+type Paged<T> = { items: T[]; next_cursor?: string | null }
+
+export function usePagedList<T>(query: {
+    data?: { pages: Paged<T>[] }
+    fetchNextPage: () => Promise<unknown>
+    isFetchingNextPage: boolean
+    isFetchNextPageError: boolean
+    error: unknown
+}) {
+    const { data, fetchNextPage, isFetchingNextPage, isFetchNextPageError, error } = query
+    const rows = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
+    const pagination = useMemo(
+        () => ({
+            nextCursor: data?.pages.at(-1)?.next_cursor ?? null,
+            fetchNextPage,
+            isFetchingNextPage,
+            error: isFetchNextPageError ? error : undefined,
+        }),
+        [data, fetchNextPage, isFetchingNextPage, isFetchNextPageError, error],
+    )
+    return { rows, pagination }
 }

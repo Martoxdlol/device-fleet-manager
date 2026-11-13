@@ -79,11 +79,30 @@ export const components = {
         toDark: 'Cambiar al tema oscuro',
         toLight: 'Cambiar al tema claro',
         appearance: 'Apariencia',
+        menu: 'Menú de la cuenta',
+        profile: 'Tu perfil',
+        admin: 'Administración',
+        signOut: 'Cerrar sesión',
     },
     brand: {
         home: (name: string) => `Inicio de ${name}`,
     },
     navigation: {
-        home: 'Inicio',
+        organizations: 'Organizaciones',
+        fleets: 'Flotas',
+    },
+    orgSwitcher: {
+        organizations: 'Organizaciones',
+        menu: 'Menú de la organización',
+        menuOf: (name: string) => `Menú de la organización, ${name}`,
+        loading: 'Cargando organizaciones',
+        failed: 'No se pudieron cargar las organizaciones',
+        moreFailed: 'No se pudieron cargar más organizaciones',
+    },
+    forms: {
+        url: 'URL',
+        editUrl: (url: string) => `Editar la URL ${url}`,
+        editUrlTip: 'Editar la URL',
+        slugHint: 'Letras minúsculas y números, unidos por guiones simples.',
     },
 } satisfies Shape<typeof en>
