@@ -19,7 +19,7 @@ An agent on Windows and Linux machines connects to a server over the internet, r
 
 ```sh
 bun install                      # JS workspaces
-cp .env.example .env             # then set DATABASE_URL
+cp .env.example .env             # then set DATABASE_URL and FLEET_MASTER_KEY (openssl rand -base64 32)
 cargo run -p fleet_server        # API on :3000, migrates on start
 bun run --cwd apps/web dev       # console on :5173, /api proxied to :3000
 bun run codegen                  # OpenAPI document and TypeScript client, after API changes
@@ -29,5 +29,7 @@ bun run --cwd apps/web typecheck
 ```
 
 Applied migrations are never edited; add a new one.
+
+With no users yet, the server either creates the first instance admin and organization from `FLEET_BOOTSTRAP_EMAIL` and `FLEET_BOOTSTRAP_PASSWORD` (or `FLEET_BOOTSTRAP_PASSWORD_HASH`), or logs a one-time `/setup` link. `FLEET_SIGNUP=open` lets anyone create an account; the default `invite` only takes invited people. `FLEET_MASTER_KEY` seals the agent keys: back it up, losing it means enrolling every agent again.
 
 The Docker image serves the API and the console from one container: the console is built into it and served from `FLEET_WEB_DIR`, every path outside `/api` and `/health` is the console.

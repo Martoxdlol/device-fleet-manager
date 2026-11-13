@@ -32,6 +32,11 @@ opentelemetry-appender-tracing = "0.32"
 opentelemetry-http = "0.32"
 opentelemetry-otlp = { version = "0.32", features = ["reqwest-rustls"] }
 http = "1"
+getrandom = "0.4"
+sha2 = "0.11"
+argon2 = "0.6"
+x25519-dalek = { version = "3", features = ["static_secrets"] }
+aes-gcm = "0.11"
 
 [profile.release]
 lto = "thin"

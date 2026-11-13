@@ -4,6 +4,1399 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type AccessLevel = 'read' | 'write' | 'admin';
+
+export type AddGroupMembers = {
+    user_ids: Array<string>;
+};
+
+export type Added = {
+    added: number;
+};
+
+export type AgentKey = {
+    created_at: string;
+    fleet_count: number;
+    id: string;
+    name: string;
+    org_id: string;
+    public_key: string;
+};
+
+export type ApiError = {
+    details?: Array<FieldError> | null;
+    error: string;
+    message: string;
+    request_id?: string | null;
+};
+
+export type ChangePassword = {
+    current_password?: string | null;
+    new_password: string;
+};
+
+export type CreateFleet = {
+    agent_key_id?: string | null;
+    name: string;
+    slug: string;
+};
+
+export type CreateGrant = {
+    group_id?: string | null;
+    level: AccessLevel;
+    user_id?: string | null;
+};
+
+export type CreateInvitation = {
+    email: string;
+    role: OrgRole;
+};
+
+export type CreateOrg = {
+    name: string;
+    slug: string;
+};
+
+export type CreatedInvitation = {
+    invitation: Invitation;
+    token: string;
+};
+
+export type FieldError = {
+    code: string;
+    field: string;
+    message: string;
+};
+
+export type Fleet = {
+    agent_key_id: string;
+    created_at: string;
+    id: string;
+    name: string;
+    org_id: string;
+    slug: string;
+    updated_at: string;
+};
+
+export type Grant = {
+    created_at: string;
+    fleet_id: string;
+    group_id?: string | null;
+    id: string;
+    level: AccessLevel;
+    subject_email?: string | null;
+    subject_name: string;
+    user_id?: string | null;
+};
+
+export type Group = {
+    created_at: string;
+    id: string;
+    member_count: number;
+    name: string;
+    org_id: string;
+    updated_at: string;
+};
+
+export type GroupName = {
+    name: string;
+};
+
+export type InstanceInfo = {
+    providers: Array<Provider>;
+    setup_required: boolean;
+    signup: Signup;
+};
+
+export type Invitation = {
+    created_at: string;
+    email: string;
+    expires_at: string;
+    id: string;
+    invited_by?: string | null;
+    org_id: string;
+    role: OrgRole;
+};
+
+export type InvitationPreview = {
+    account_exists: boolean;
+    email: string;
+    expires_at: string;
+    org_name: string;
+    org_slug: string;
+    role: OrgRole;
+};
+
+export type InvitedSignupRequest = {
+    name: string;
+    password: string;
+};
+
+export type KeyName = {
+    name: string;
+};
+
+export type LoginRequest = {
+    email: string;
+    password: string;
+};
+
+export type Member = {
+    email: string;
+    joined_at: string;
+    name: string;
+    role: OrgRole;
+    user_id: string;
+};
+
+export type MyOrganization = {
+    created_at: string;
+    id: string;
+    name: string;
+    role: OrgRole;
+    slug: string;
+    updated_at: string;
+};
+
+export type OrgRole = 'owner' | 'admin' | 'member';
+
+export type Organization = {
+    created_at: string;
+    id: string;
+    name: string;
+    slug: string;
+    updated_at: string;
+};
+
+export type PageAgentKey = {
+    items: Array<{
+        created_at: string;
+        fleet_count: number;
+        id: string;
+        name: string;
+        org_id: string;
+        public_key: string;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageGrant = {
+    items: Array<{
+        created_at: string;
+        fleet_id: string;
+        group_id?: string | null;
+        id: string;
+        level: AccessLevel;
+        subject_email?: string | null;
+        subject_name: string;
+        user_id?: string | null;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageGroup = {
+    items: Array<{
+        created_at: string;
+        id: string;
+        member_count: number;
+        name: string;
+        org_id: string;
+        updated_at: string;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageInvitation = {
+    items: Array<{
+        created_at: string;
+        email: string;
+        expires_at: string;
+        id: string;
+        invited_by?: string | null;
+        org_id: string;
+        role: OrgRole;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageMember = {
+    items: Array<{
+        email: string;
+        joined_at: string;
+        name: string;
+        role: OrgRole;
+        user_id: string;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageMyOrganization = {
+    items: Array<{
+        created_at: string;
+        id: string;
+        name: string;
+        role: OrgRole;
+        slug: string;
+        updated_at: string;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageUser = {
+    items: Array<{
+        created_at: string;
+        email: string;
+        id: string;
+        instance_admin: boolean;
+        name: string;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PageVisibleFleet = {
+    items: Array<Fleet & {
+        access: AccessLevel;
+    }>;
+    next_cursor?: string | null;
+};
+
+export type PasswordResetLink = {
+    token: string;
+};
+
+export type Provider = 'password';
+
+export type ResetPasswordRequest = {
+    password: string;
+    token: string;
+};
+
+export type Resolved = {
+    fleet_id?: string | null;
+    org_id: string;
+};
+
+export type Session = {
+    token: string;
+    user: User;
+};
+
+export type SetupRequest = {
+    email: string;
+    name: string;
+    org_name: string;
+    org_slug: string;
+    password: string;
+    token: string;
+};
+
+export type SetupResponse = {
+    org: Organization;
+    token: string;
+    user: User;
+};
+
+export type Signup = 'invite' | 'open';
+
+export type SignupRequest = {
+    email: string;
+    name: string;
+    password: string;
+};
+
+export type UpdateFleet = {
+    agent_key_id?: string | null;
+    name?: string | null;
+    slug?: string | null;
+};
+
+export type UpdateGrant = {
+    level: AccessLevel;
+};
+
+export type UpdateMe = {
+    name: string;
+};
+
+export type UpdateMember = {
+    role: OrgRole;
+};
+
+export type UpdateOrg = {
+    name?: string | null;
+    slug?: string | null;
+};
+
+export type UpdateUser = {
+    instance_admin: boolean;
+};
+
+export type User = {
+    created_at: string;
+    email: string;
+    id: string;
+    instance_admin: boolean;
+    name: string;
+};
+
+export type VisibleFleet = Fleet & {
+    access: AccessLevel;
+};
+
+export type ListUsersData = {
+    body?: never;
+    path?: never;
+    query?: {
+        cursor?: string;
+        limit?: number;
+        q?: string;
+    };
+    url: '/api/v1/admin/users';
+};
+
+export type ListUsersErrors = {
+    403: ApiError;
+};
+
+export type ListUsersError = ListUsersErrors[keyof ListUsersErrors];
+
+export type ListUsersResponses = {
+    200: PageUser;
+};
+
+export type ListUsersResponse = ListUsersResponses[keyof ListUsersResponses];
+
+export type UpdateUserData = {
+    body: UpdateUser;
+    path: {
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/users/{user_id}';
+};
+
+export type UpdateUserErrors = {
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type UpdateUserError = UpdateUserErrors[keyof UpdateUserErrors];
+
+export type UpdateUserResponses = {
+    200: User;
+};
+
+export type UpdateUserResponse = UpdateUserResponses[keyof UpdateUserResponses];
+
+export type CreatePasswordResetData = {
+    body?: never;
+    path: {
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/users/{user_id}/password-reset';
+};
+
+export type CreatePasswordResetErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type CreatePasswordResetError = CreatePasswordResetErrors[keyof CreatePasswordResetErrors];
+
+export type CreatePasswordResetResponses = {
+    201: PasswordResetLink;
+};
+
+export type CreatePasswordResetResponse = CreatePasswordResetResponses[keyof CreatePasswordResetResponses];
+
+export type LoginData = {
+    body: LoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/login';
+};
+
+export type LoginErrors = {
+    401: ApiError;
+};
+
+export type LoginError = LoginErrors[keyof LoginErrors];
+
+export type LoginResponses = {
+    200: Session;
+};
+
+export type LoginResponse = LoginResponses[keyof LoginResponses];
+
+export type LogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/logout';
+};
+
+export type LogoutErrors = {
+    401: ApiError;
+};
+
+export type LogoutError = LogoutErrors[keyof LogoutErrors];
+
+export type LogoutResponses = {
+    204: void;
+};
+
+export type LogoutResponse = LogoutResponses[keyof LogoutResponses];
+
+export type ResetPasswordData = {
+    body: ResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/password-reset';
+};
+
+export type ResetPasswordErrors = {
+    400: ApiError;
+    404: ApiError;
+};
+
+export type ResetPasswordError = ResetPasswordErrors[keyof ResetPasswordErrors];
+
+export type ResetPasswordResponses = {
+    200: Session;
+};
+
+export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];
+
+export type SignupData = {
+    body: SignupRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/signup';
+};
+
+export type SignupErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type SignupError = SignupErrors[keyof SignupErrors];
+
+export type SignupResponses = {
+    201: Session;
+};
+
+export type SignupResponse = SignupResponses[keyof SignupResponses];
+
+export type DeleteFleetData = {
+    body?: never;
+    path: {
+        fleet_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}';
+};
+
+export type DeleteFleetErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type DeleteFleetError = DeleteFleetErrors[keyof DeleteFleetErrors];
+
+export type DeleteFleetResponses = {
+    204: void;
+};
+
+export type DeleteFleetResponse = DeleteFleetResponses[keyof DeleteFleetResponses];
+
+export type GetFleetData = {
+    body?: never;
+    path: {
+        fleet_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}';
+};
+
+export type GetFleetErrors = {
+    404: ApiError;
+};
+
+export type GetFleetError = GetFleetErrors[keyof GetFleetErrors];
+
+export type GetFleetResponses = {
+    200: VisibleFleet;
+};
+
+export type GetFleetResponse = GetFleetResponses[keyof GetFleetResponses];
+
+export type UpdateFleetData = {
+    body: UpdateFleet;
+    path: {
+        fleet_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}';
+};
+
+export type UpdateFleetErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type UpdateFleetError = UpdateFleetErrors[keyof UpdateFleetErrors];
+
+export type UpdateFleetResponses = {
+    200: Fleet;
+};
+
+export type UpdateFleetResponse = UpdateFleetResponses[keyof UpdateFleetResponses];
+
+export type ListGrantsData = {
+    body?: never;
+    path: {
+        fleet_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/fleets/{fleet_id}/grants';
+};
+
+export type ListGrantsErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type ListGrantsError = ListGrantsErrors[keyof ListGrantsErrors];
+
+export type ListGrantsResponses = {
+    200: PageGrant;
+};
+
+export type ListGrantsResponse = ListGrantsResponses[keyof ListGrantsResponses];
+
+export type CreateGrantData = {
+    body: CreateGrant;
+    path: {
+        fleet_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}/grants';
+};
+
+export type CreateGrantErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+};
+
+export type CreateGrantError = CreateGrantErrors[keyof CreateGrantErrors];
+
+export type CreateGrantResponses = {
+    201: Grant;
+};
+
+export type CreateGrantResponse = CreateGrantResponses[keyof CreateGrantResponses];
+
+export type DeleteGrantData = {
+    body?: never;
+    path: {
+        fleet_id: string;
+        grant_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}/grants/{grant_id}';
+};
+
+export type DeleteGrantErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type DeleteGrantError = DeleteGrantErrors[keyof DeleteGrantErrors];
+
+export type DeleteGrantResponses = {
+    204: void;
+};
+
+export type DeleteGrantResponse = DeleteGrantResponses[keyof DeleteGrantResponses];
+
+export type UpdateGrantData = {
+    body: UpdateGrant;
+    path: {
+        fleet_id: string;
+        grant_id: string;
+    };
+    query?: never;
+    url: '/api/v1/fleets/{fleet_id}/grants/{grant_id}';
+};
+
+export type UpdateGrantErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type UpdateGrantError = UpdateGrantErrors[keyof UpdateGrantErrors];
+
+export type UpdateGrantResponses = {
+    200: Grant;
+};
+
+export type UpdateGrantResponse = UpdateGrantResponses[keyof UpdateGrantResponses];
+
+export type InstanceData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/instance';
+};
+
+export type InstanceResponses = {
+    200: InstanceInfo;
+};
+
+export type InstanceResponse = InstanceResponses[keyof InstanceResponses];
+
+export type PreviewInvitationData = {
+    body?: never;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/invitations/{token}';
+};
+
+export type PreviewInvitationErrors = {
+    404: ApiError;
+};
+
+export type PreviewInvitationError = PreviewInvitationErrors[keyof PreviewInvitationErrors];
+
+export type PreviewInvitationResponses = {
+    200: InvitationPreview;
+};
+
+export type PreviewInvitationResponse = PreviewInvitationResponses[keyof PreviewInvitationResponses];
+
+export type AcceptInvitationData = {
+    body?: never;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/invitations/{token}/accept';
+};
+
+export type AcceptInvitationErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type AcceptInvitationError = AcceptInvitationErrors[keyof AcceptInvitationErrors];
+
+export type AcceptInvitationResponses = {
+    200: Organization;
+};
+
+export type AcceptInvitationResponse = AcceptInvitationResponses[keyof AcceptInvitationResponses];
+
+export type SignupInvitedData = {
+    body: InvitedSignupRequest;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/api/v1/invitations/{token}/signup';
+};
+
+export type SignupInvitedErrors = {
+    400: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type SignupInvitedError = SignupInvitedErrors[keyof SignupInvitedErrors];
+
+export type SignupInvitedResponses = {
+    201: SetupResponse;
+};
+
+export type SignupInvitedResponse = SignupInvitedResponses[keyof SignupInvitedResponses];
+
+export type MeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me';
+};
+
+export type MeErrors = {
+    401: ApiError;
+};
+
+export type MeError = MeErrors[keyof MeErrors];
+
+export type MeResponses = {
+    200: User;
+};
+
+export type MeResponse = MeResponses[keyof MeResponses];
+
+export type UpdateMeData = {
+    body: UpdateMe;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me';
+};
+
+export type UpdateMeErrors = {
+    400: ApiError;
+    401: ApiError;
+};
+
+export type UpdateMeError = UpdateMeErrors[keyof UpdateMeErrors];
+
+export type UpdateMeResponses = {
+    200: User;
+};
+
+export type UpdateMeResponse = UpdateMeResponses[keyof UpdateMeResponses];
+
+export type ChangePasswordData = {
+    body: ChangePassword;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me/password';
+};
+
+export type ChangePasswordErrors = {
+    400: ApiError;
+    401: ApiError;
+};
+
+export type ChangePasswordError = ChangePasswordErrors[keyof ChangePasswordErrors];
+
+export type ChangePasswordResponses = {
+    204: void;
+};
+
+export type ChangePasswordResponse = ChangePasswordResponses[keyof ChangePasswordResponses];
+
+export type ListOrgsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs';
+};
+
+export type ListOrgsErrors = {
+    401: ApiError;
+};
+
+export type ListOrgsError = ListOrgsErrors[keyof ListOrgsErrors];
+
+export type ListOrgsResponses = {
+    200: PageMyOrganization;
+};
+
+export type ListOrgsResponse = ListOrgsResponses[keyof ListOrgsResponses];
+
+export type CreateOrgData = {
+    body: CreateOrg;
+    path?: never;
+    query?: never;
+    url: '/api/v1/orgs';
+};
+
+export type CreateOrgErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type CreateOrgError = CreateOrgErrors[keyof CreateOrgErrors];
+
+export type CreateOrgResponses = {
+    201: Organization;
+};
+
+export type CreateOrgResponse = CreateOrgResponses[keyof CreateOrgResponses];
+
+export type DeleteOrgData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}';
+};
+
+export type DeleteOrgErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type DeleteOrgError = DeleteOrgErrors[keyof DeleteOrgErrors];
+
+export type DeleteOrgResponses = {
+    204: void;
+};
+
+export type DeleteOrgResponse = DeleteOrgResponses[keyof DeleteOrgResponses];
+
+export type GetOrgData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}';
+};
+
+export type GetOrgErrors = {
+    404: ApiError;
+};
+
+export type GetOrgError = GetOrgErrors[keyof GetOrgErrors];
+
+export type GetOrgResponses = {
+    200: MyOrganization;
+};
+
+export type GetOrgResponse = GetOrgResponses[keyof GetOrgResponses];
+
+export type UpdateOrgData = {
+    body: UpdateOrg;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}';
+};
+
+export type UpdateOrgErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type UpdateOrgError = UpdateOrgErrors[keyof UpdateOrgErrors];
+
+export type UpdateOrgResponses = {
+    200: Organization;
+};
+
+export type UpdateOrgResponse = UpdateOrgResponses[keyof UpdateOrgResponses];
+
+export type ListKeysData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs/{org_id}/agent-keys';
+};
+
+export type ListKeysErrors = {
+    404: ApiError;
+};
+
+export type ListKeysError = ListKeysErrors[keyof ListKeysErrors];
+
+export type ListKeysResponses = {
+    200: PageAgentKey;
+};
+
+export type ListKeysResponse = ListKeysResponses[keyof ListKeysResponses];
+
+export type CreateKeyData = {
+    body: KeyName;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/agent-keys';
+};
+
+export type CreateKeyErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type CreateKeyError = CreateKeyErrors[keyof CreateKeyErrors];
+
+export type CreateKeyResponses = {
+    201: AgentKey;
+};
+
+export type CreateKeyResponse = CreateKeyResponses[keyof CreateKeyResponses];
+
+export type DeleteKeyData = {
+    body?: never;
+    path: {
+        org_id: string;
+        key_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/agent-keys/{key_id}';
+};
+
+export type DeleteKeyErrors = {
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type DeleteKeyError = DeleteKeyErrors[keyof DeleteKeyErrors];
+
+export type DeleteKeyResponses = {
+    204: void;
+};
+
+export type DeleteKeyResponse = DeleteKeyResponses[keyof DeleteKeyResponses];
+
+export type RenameKeyData = {
+    body: KeyName;
+    path: {
+        org_id: string;
+        key_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/agent-keys/{key_id}';
+};
+
+export type RenameKeyErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type RenameKeyError = RenameKeyErrors[keyof RenameKeyErrors];
+
+export type RenameKeyResponses = {
+    200: AgentKey;
+};
+
+export type RenameKeyResponse = RenameKeyResponses[keyof RenameKeyResponses];
+
+export type ListFleetsData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs/{org_id}/fleets';
+};
+
+export type ListFleetsErrors = {
+    404: ApiError;
+};
+
+export type ListFleetsError = ListFleetsErrors[keyof ListFleetsErrors];
+
+export type ListFleetsResponses = {
+    200: PageVisibleFleet;
+};
+
+export type ListFleetsResponse = ListFleetsResponses[keyof ListFleetsResponses];
+
+export type CreateFleetData = {
+    body: CreateFleet;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/fleets';
+};
+
+export type CreateFleetErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type CreateFleetError = CreateFleetErrors[keyof CreateFleetErrors];
+
+export type CreateFleetResponses = {
+    201: Fleet;
+};
+
+export type CreateFleetResponse = CreateFleetResponses[keyof CreateFleetResponses];
+
+export type ListGroupsData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs/{org_id}/groups';
+};
+
+export type ListGroupsErrors = {
+    404: ApiError;
+};
+
+export type ListGroupsError = ListGroupsErrors[keyof ListGroupsErrors];
+
+export type ListGroupsResponses = {
+    200: PageGroup;
+};
+
+export type ListGroupsResponse = ListGroupsResponses[keyof ListGroupsResponses];
+
+export type CreateGroupData = {
+    body: GroupName;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/groups';
+};
+
+export type CreateGroupErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type CreateGroupError = CreateGroupErrors[keyof CreateGroupErrors];
+
+export type CreateGroupResponses = {
+    201: Group;
+};
+
+export type CreateGroupResponse = CreateGroupResponses[keyof CreateGroupResponses];
+
+export type DeleteGroupData = {
+    body?: never;
+    path: {
+        org_id: string;
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/groups/{group_id}';
+};
+
+export type DeleteGroupErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type DeleteGroupError = DeleteGroupErrors[keyof DeleteGroupErrors];
+
+export type DeleteGroupResponses = {
+    204: void;
+};
+
+export type DeleteGroupResponse = DeleteGroupResponses[keyof DeleteGroupResponses];
+
+export type RenameGroupData = {
+    body: GroupName;
+    path: {
+        org_id: string;
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/groups/{group_id}';
+};
+
+export type RenameGroupErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type RenameGroupError = RenameGroupErrors[keyof RenameGroupErrors];
+
+export type RenameGroupResponses = {
+    200: Group;
+};
+
+export type RenameGroupResponse = RenameGroupResponses[keyof RenameGroupResponses];
+
+export type ListGroupMembersData = {
+    body?: never;
+    path: {
+        org_id: string;
+        group_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs/{org_id}/groups/{group_id}/members';
+};
+
+export type ListGroupMembersErrors = {
+    404: ApiError;
+};
+
+export type ListGroupMembersError = ListGroupMembersErrors[keyof ListGroupMembersErrors];
+
+export type ListGroupMembersResponses = {
+    200: PageMember;
+};
+
+export type ListGroupMembersResponse = ListGroupMembersResponses[keyof ListGroupMembersResponses];
+
+export type AddGroupMembersData = {
+    body: AddGroupMembers;
+    path: {
+        org_id: string;
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/groups/{group_id}/members';
+};
+
+export type AddGroupMembersErrors = {
+    400: ApiError;
+    403: ApiError;
+    404: ApiError;
+};
+
+export type AddGroupMembersError = AddGroupMembersErrors[keyof AddGroupMembersErrors];
+
+export type AddGroupMembersResponses = {
+    200: Added;
+};
+
+export type AddGroupMembersResponse = AddGroupMembersResponses[keyof AddGroupMembersResponses];
+
+export type RemoveGroupMemberData = {
+    body?: never;
+    path: {
+        org_id: string;
+        group_id: string;
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/groups/{group_id}/members/{user_id}';
+};
+
+export type RemoveGroupMemberErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type RemoveGroupMemberError = RemoveGroupMemberErrors[keyof RemoveGroupMemberErrors];
+
+export type RemoveGroupMemberResponses = {
+    204: void;
+};
+
+export type RemoveGroupMemberResponse = RemoveGroupMemberResponses[keyof RemoveGroupMemberResponses];
+
+export type ListInvitationsData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/api/v1/orgs/{org_id}/invitations';
+};
+
+export type ListInvitationsErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type ListInvitationsError = ListInvitationsErrors[keyof ListInvitationsErrors];
+
+export type ListInvitationsResponses = {
+    200: PageInvitation;
+};
+
+export type ListInvitationsResponse = ListInvitationsResponses[keyof ListInvitationsResponses];
+
+export type CreateInvitationData = {
+    body: CreateInvitation;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/invitations';
+};
+
+export type CreateInvitationErrors = {
+    400: ApiError;
+    403: ApiError;
+    409: ApiError;
+};
+
+export type CreateInvitationError = CreateInvitationErrors[keyof CreateInvitationErrors];
+
+export type CreateInvitationResponses = {
+    201: CreatedInvitation;
+};
+
+export type CreateInvitationResponse = CreateInvitationResponses[keyof CreateInvitationResponses];
+
+export type RevokeInvitationData = {
+    body?: never;
+    path: {
+        org_id: string;
+        invitation_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/invitations/{invitation_id}';
+};
+
+export type RevokeInvitationErrors = {
+    403: ApiError;
+    404: ApiError;
+};
+
+export type RevokeInvitationError = RevokeInvitationErrors[keyof RevokeInvitationErrors];
+
+export type RevokeInvitationResponses = {
+    204: void;
+};
+
+export type RevokeInvitationResponse = RevokeInvitationResponses[keyof RevokeInvitationResponses];
+
+export type ListMembersData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: {
+        cursor?: string;
+        limit?: number;
+        q?: string;
+    };
+    url: '/api/v1/orgs/{org_id}/members';
+};
+
+export type ListMembersErrors = {
+    404: ApiError;
+};
+
+export type ListMembersError = ListMembersErrors[keyof ListMembersErrors];
+
+export type ListMembersResponses = {
+    200: PageMember;
+};
+
+export type ListMembersResponse = ListMembersResponses[keyof ListMembersResponses];
+
+export type RemoveMemberData = {
+    body?: never;
+    path: {
+        org_id: string;
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/members/{user_id}';
+};
+
+export type RemoveMemberErrors = {
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type RemoveMemberError = RemoveMemberErrors[keyof RemoveMemberErrors];
+
+export type RemoveMemberResponses = {
+    204: void;
+};
+
+export type RemoveMemberResponse = RemoveMemberResponses[keyof RemoveMemberResponses];
+
+export type UpdateMemberData = {
+    body: UpdateMember;
+    path: {
+        org_id: string;
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orgs/{org_id}/members/{user_id}';
+};
+
+export type UpdateMemberErrors = {
+    403: ApiError;
+    404: ApiError;
+    409: ApiError;
+};
+
+export type UpdateMemberError = UpdateMemberErrors[keyof UpdateMemberErrors];
+
+export type UpdateMemberResponses = {
+    200: Member;
+};
+
+export type UpdateMemberResponse = UpdateMemberResponses[keyof UpdateMemberResponses];
+
+export type ResolveData = {
+    body?: never;
+    path?: never;
+    query: {
+        org: string;
+        fleet?: string;
+    };
+    url: '/api/v1/resolve';
+};
+
+export type ResolveErrors = {
+    401: ApiError;
+    404: ApiError;
+};
+
+export type ResolveError = ResolveErrors[keyof ResolveErrors];
+
+export type ResolveResponses = {
+    200: Resolved;
+};
+
+export type ResolveResponse = ResolveResponses[keyof ResolveResponses];
+
+export type SetupData = {
+    body: SetupRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/setup';
+};
+
+export type SetupErrors = {
+    400: ApiError;
+    403: ApiError;
+};
+
+export type SetupError = SetupErrors[keyof SetupErrors];
+
+export type SetupResponses = {
+    201: SetupResponse;
+};
+
+export type SetupResponse2 = SetupResponses[keyof SetupResponses];
+
 export type HealthData = {
     body?: never;
     path?: never;

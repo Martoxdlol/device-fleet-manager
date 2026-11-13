@@ -1,4 +1,5 @@
 use fleet_i18n::{Lang, Localize, tr};
+use fleet_lib::model::AccessLevel;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -31,6 +32,38 @@ pub enum Message {
     FieldTooLong,
     DatabaseUnavailable,
     DatabaseFailed,
+    SlugTooShort { min: usize },
+    SlugReserved,
+    OrganizationNotFound,
+    FleetNotFound,
+    GroupNotFound,
+    MemberNotFound,
+    InvitationNotFound,
+    AgentKeyNotFound,
+    UserNotFound,
+    GrantNotFound,
+    OwnerOrAdminRequired,
+    OwnerRequired,
+    InstanceAdminRequired,
+    FleetAccessRequired { level: AccessLevel },
+    InvalidCredentials,
+    SignupClosed,
+    OrgCreationAdminsOnly,
+    EmailInvalid,
+    EmailTaken,
+    PasswordTooShort { min: usize },
+    PasswordTooLong { max: usize },
+    CurrentPasswordWrong,
+    SetupTokenInvalid,
+    LastOwner,
+    LastInstanceAdmin,
+    AlreadyMember,
+    InvitationWrongEmail,
+    AccountExistsSignIn,
+    ResetLinkInvalid,
+    AgentKeyInUse,
+    NoAgentKey,
+    GrantSubject,
 }
 
 impl Localize for Message {
@@ -112,8 +145,8 @@ impl Localize for Message {
             }
             SlugFormat => tr!(
                 lang,
-                "Letters, digits, - and _ only",
-                "Solo letras, dígitos, - y _"
+                "Lowercase letters and digits, joined by single hyphens",
+                "Letras minúsculas y dígitos, unidos por guiones simples"
             ),
             SlugTaken => tr!(lang, "This slug is taken", "Este slug ya está en uso"),
             Empty => tr!(lang, "Must not be empty", "No puede estar vacío"),
@@ -163,6 +196,153 @@ impl Localize for Message {
                 lang,
                 "Database operation failed",
                 "Falló la operación en la base de datos"
+            ),
+            SlugTooShort { min } => {
+                let min = lang.number(min);
+                tr!(
+                    lang,
+                    "Slug must be at least {min} characters",
+                    "El slug debe tener al menos {min} caracteres"
+                )
+            }
+            SlugReserved => tr!(lang, "This slug is reserved", "Este slug está reservado"),
+            OrganizationNotFound => {
+                tr!(lang, "Organization not found", "Organización no encontrada")
+            }
+            FleetNotFound => tr!(lang, "Fleet not found", "Flota no encontrada"),
+            GroupNotFound => tr!(lang, "Group not found", "Grupo no encontrado"),
+            MemberNotFound => tr!(lang, "Member not found", "Miembro no encontrado"),
+            InvitationNotFound => tr!(
+                lang,
+                "Invitation not found or expired",
+                "Invitación no encontrada o vencida"
+            ),
+            AgentKeyNotFound => tr!(lang, "Agent key not found", "Clave de agente no encontrada"),
+            UserNotFound => tr!(lang, "User not found", "Usuario no encontrado"),
+            GrantNotFound => tr!(lang, "Access grant not found", "Permiso no encontrado"),
+            OwnerOrAdminRequired => tr!(
+                lang,
+                "Only owners and admins of the organization can do this",
+                "Solo los dueños y administradores de la organización pueden hacer esto"
+            ),
+            OwnerRequired => tr!(
+                lang,
+                "Only owners of the organization can do this",
+                "Solo los dueños de la organización pueden hacer esto"
+            ),
+            InstanceAdminRequired => tr!(
+                lang,
+                "Only instance admins can do this",
+                "Solo los administradores de la instalación pueden hacer esto"
+            ),
+            FleetAccessRequired { level } => match level {
+                AccessLevel::Read => tr!(
+                    lang,
+                    "You need read access to this fleet",
+                    "Necesitas acceso de lectura a esta flota"
+                ),
+                AccessLevel::Write => tr!(
+                    lang,
+                    "You need write access to this fleet",
+                    "Necesitas acceso de escritura a esta flota"
+                ),
+                AccessLevel::Admin => tr!(
+                    lang,
+                    "You need admin access to this fleet",
+                    "Necesitas acceso de administración a esta flota"
+                ),
+            },
+            InvalidCredentials => tr!(
+                lang,
+                "Email or password is wrong",
+                "El email o la contraseña son incorrectos"
+            ),
+            SignupClosed => tr!(
+                lang,
+                "Accounts are created by invitation",
+                "Las cuentas se crean por invitación"
+            ),
+            OrgCreationAdminsOnly => tr!(
+                lang,
+                "Only instance admins can create organizations",
+                "Solo los administradores de la instalación pueden crear organizaciones"
+            ),
+            EmailInvalid => tr!(lang, "Not a valid email address", "No es un email válido"),
+            EmailTaken => tr!(
+                lang,
+                "An account with this email already exists",
+                "Ya existe una cuenta con este email"
+            ),
+            PasswordTooShort { min } => {
+                let min = lang.number(min);
+                tr!(
+                    lang,
+                    "Password must be at least {min} characters",
+                    "La contraseña debe tener al menos {min} caracteres"
+                )
+            }
+            PasswordTooLong { max } => {
+                let max = lang.number(max);
+                tr!(
+                    lang,
+                    "Password must be at most {max} characters",
+                    "La contraseña puede tener como máximo {max} caracteres"
+                )
+            }
+            CurrentPasswordWrong => tr!(
+                lang,
+                "Current password is wrong",
+                "La contraseña actual es incorrecta"
+            ),
+            SetupTokenInvalid => tr!(
+                lang,
+                "This setup link is not valid anymore",
+                "Este enlace de configuración ya no es válido"
+            ),
+            LastOwner => tr!(
+                lang,
+                "An organization needs at least one owner",
+                "Una organización necesita al menos un dueño"
+            ),
+            LastInstanceAdmin => tr!(
+                lang,
+                "The installation needs at least one instance admin",
+                "La instalación necesita al menos un administrador"
+            ),
+            AlreadyMember => tr!(
+                lang,
+                "This person is already a member",
+                "Esta persona ya es miembro"
+            ),
+            InvitationWrongEmail => tr!(
+                lang,
+                "This invitation is for another email address",
+                "Esta invitación es para otro email"
+            ),
+            AccountExistsSignIn => tr!(
+                lang,
+                "An account with this email exists; sign in to accept",
+                "Ya existe una cuenta con este email; inicia sesión para aceptar"
+            ),
+            ResetLinkInvalid => tr!(
+                lang,
+                "This reset link is not valid anymore",
+                "Este enlace para restablecer la contraseña ya no es válido"
+            ),
+            AgentKeyInUse => tr!(
+                lang,
+                "Fleets use this key; choose another key for them first",
+                "Hay flotas que usan esta clave; elige otra clave para ellas primero"
+            ),
+            NoAgentKey => tr!(
+                lang,
+                "The organization has no such agent key",
+                "La organización no tiene esa clave de agente"
+            ),
+            GrantSubject => tr!(
+                lang,
+                "Give exactly one of user_id and group_id",
+                "Indica exactamente uno de user_id y group_id"
             ),
         }
     }

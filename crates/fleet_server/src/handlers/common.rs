@@ -16,10 +16,13 @@ use uuid::Uuid;
 
 use crate::messages::Message as M;
 
+use fleet_lib::auth::{MAX_PASSWORD_LEN, MIN_PASSWORD_LEN};
+use fleet_lib::model::{MAX_SLUG_LEN, MIN_SLUG_LEN, is_slug};
 pub use fleet_lib::page::{MAX_LIMIT, Page, Pagination};
 
 pub const MAX_NAME_LEN: usize = 1000;
-pub const MAX_SLUG_LEN: usize = 56;
+pub const MAX_USER_NAME_LEN: usize = 255;
+pub const MAX_EMAIL_LEN: usize = 320;
 
 pub fn page_limit(page: &Pagination) -> i64 {
     page.limit_max(MAX_LIMIT) as i64
@@ -401,16 +404,63 @@ impl Validator {
         self.details.push(Detail::new(field, code, message));
     }
 
-    pub fn slug(&mut self, field: &str, value: &str) {
+    pub fn slug(&mut self, field: &str, value: &str, reserved: &[&str]) {
         if value.is_empty() {
             self.push(field, "required", M::SlugEmpty);
+        } else if value.len() < MIN_SLUG_LEN {
+            self.push(field, "too_short", M::SlugTooShort { min: MIN_SLUG_LEN });
         } else if value.len() > MAX_SLUG_LEN {
             self.push(field, "too_long", M::SlugTooLong { max: MAX_SLUG_LEN });
-        } else if !value
-            .bytes()
-            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
-        {
+        } else if !is_slug(value) {
             self.push(field, "format", M::SlugFormat);
+        } else if reserved.contains(&value) {
+            self.push(field, "reserved", M::SlugReserved);
+        }
+    }
+
+    pub fn email(&mut self, field: &str, value: &str) {
+        let valid = value.len() <= MAX_EMAIL_LEN
+            && !value.chars().any(char::is_whitespace)
+            && value.split_once('@').is_some_and(|(local, domain)| {
+                !local.is_empty() && domain.contains('.') && !domain.contains('@')
+            });
+        if !valid {
+            self.push(field, "format", M::EmailInvalid);
+        }
+    }
+
+    pub fn password(&mut self, field: &str, value: &str) {
+        let length = value.chars().count();
+        if length < MIN_PASSWORD_LEN {
+            self.push(
+                field,
+                "too_short",
+                M::PasswordTooShort {
+                    min: MIN_PASSWORD_LEN,
+                },
+            );
+        } else if length > MAX_PASSWORD_LEN {
+            self.push(
+                field,
+                "too_long",
+                M::PasswordTooLong {
+                    max: MAX_PASSWORD_LEN,
+                },
+            );
+        }
+    }
+
+    pub fn short_name(&mut self, field: &str, value: &str) {
+        if value.trim().is_empty() {
+            self.push(field, "required", M::NameEmpty);
+        } else if value.chars().count() > MAX_USER_NAME_LEN {
+            self.push(
+                field,
+                "too_long",
+                M::NameTooLong {
+                    max: MAX_USER_NAME_LEN,
+                },
+            );
         }
     }
 
@@ -446,7 +496,25 @@ pub fn db_error(err: sqlx::Error) -> ErrorResponse {
                     M::SlugTaken,
                 )]);
             }
+            Some("23505")
+                if db
+                    .constraint()
+                    .is_some_and(|name| name == "users_email_key") =>
+            {
+                return conflict(M::EmailTaken).with_details(vec![Detail::new(
+                    "email",
+                    "taken",
+                    M::EmailTaken,
+                )]);
+            }
             Some("23505") => return conflict(M::AlreadyExists),
+            Some("23514")
+                if db
+                    .constraint()
+                    .is_some_and(|name| name.ends_with("_slug_reserved_check")) =>
+            {
+                return validation(vec![Detail::new("slug", "reserved", M::SlugReserved)]);
+            }
             Some("23514") => return bad_request(M::ConstraintViolated),
             Some("22001") => return bad_request(M::FieldTooLong),
             _ => {}

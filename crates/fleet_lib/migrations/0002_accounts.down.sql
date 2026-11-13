@@ -1,0 +1,15 @@
+DROP TABLE fleet_grants;
+DROP TABLE fleets;
+DROP TABLE agent_keys;
+DROP TABLE org_invitations;
+DROP TABLE group_members;
+DROP TABLE groups;
+DROP TABLE org_members;
+DROP TABLE organizations;
+DROP TABLE instance_setup;
+DROP TABLE password_resets;
+DROP TABLE sessions;
+DROP TABLE user_identities;
+DROP TABLE users;
+DROP TYPE access_level;
+DROP TYPE org_role;

@@ -24,6 +24,8 @@ pub mod request_id;
 pub mod trace;
 
 #[cfg(test)]
+mod api_tests;
+#[cfg(test)]
 mod tests;
 
 const API_PREFIX: &str = "/api";

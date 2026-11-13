@@ -1,6 +1,8 @@
 use axum::body::{Body, to_bytes};
 use axum::http::{Request, StatusCode};
 use fleet_lib::AppContext;
+use fleet_lib::keys::MasterKey;
+use fleet_lib::model::Signup;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
@@ -12,13 +14,17 @@ const OPENAPI_PATH: &str = concat!(
     "/../../packages/fleet_client/openapi.json"
 );
 
+pub(crate) fn test_master_key() -> MasterKey {
+    MasterKey::parse("MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=").unwrap()
+}
+
 fn offline_state() -> AppState {
     let pool = PgPoolOptions::new()
         .connect_lazy("postgres://offline@127.0.0.1:1/offline")
         .expect("a lazy pool needs no connection");
     AppState {
         db: pool.clone(),
-        ctx: AppContext::new(pool),
+        ctx: AppContext::new(pool, test_master_key(), Signup::Invite),
         app_url: "http://localhost:5173".into(),
     }
 }

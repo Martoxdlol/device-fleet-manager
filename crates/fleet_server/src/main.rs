@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 use std::time::Duration;
 
+use fleet_lib::repo::accounts::BootstrapOutcome;
 use fleet_lib::{AppContext, Config};
 use fleet_server::{AppState, app, cors_layer};
 use tokio::net::TcpListener;
@@ -46,9 +47,26 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         tracing::info!("auto-migrate disabled; assuming the schema is already current");
     }
 
+    let ctx = AppContext::from_config(&config, pool.clone());
+    match ctx
+        .repos
+        .accounts
+        .bootstrap(config.bootstrap.as_ref(), &ctx.master_key)
+        .await?
+    {
+        BootstrapOutcome::Existing => {}
+        BootstrapOutcome::Created { email } => {
+            tracing::info!(%email, "bootstrap created the first instance admin and organization")
+        }
+        BootstrapOutcome::SetupToken(token) => tracing::warn!(
+            link = %format!("{}/setup?token={token}", config.app_url),
+            "no users yet; open this link to create the first admin"
+        ),
+    }
+
     let state = AppState {
-        db: pool.clone(),
-        ctx: AppContext::new(pool),
+        db: pool,
+        ctx,
         app_url: config.app_url.clone(),
     };
 

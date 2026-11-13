@@ -29,11 +29,23 @@ As in Temblo, so the hosted service can shard later:
 - One container serves everything: the API under `/api`, `/health`, and the console for every other path (`FLEET_WEB_DIR`). The console calls the API on its own origin; in development Vite proxies `/api` to the server.
 - API conventions follow Temblo's `docs/http-api.md`: `/api/v1`, uuid v7 ids in the API, slugs only in browser URLs, `{items, next_cursor}` pages, one JSON error envelope localized by `Accept-Language`.
 
-## Login
+## Accounts and login
 
-- Providers are configured per installation: Google (OIDC), Microsoft (OIDC), local accounts (argon2 password hashes). Each is switched on by its configuration.
-- Sessions follow Temblo's flow: the server finishes the provider login, hands the SPA a one-time code at `/auth/complete`, the SPA exchanges it for a bearer token. Tokens are stored hashed. Sessions are never tied to an org.
-- Later, for the hosted service: per-org SSO and email domain rules.
+- Providers are configured per installation: local accounts (argon2 password hashes, always on), Google and Microsoft (OIDC, on when configured).
+- Local login answers the session token directly. Google and Microsoft follow Temblo's flow: the server finishes the provider login, hands the SPA a one-time code at `/auth/complete`, the SPA exchanges it for a bearer token with its PKCE verifier.
+- Session tokens are 32 random bytes, stored as SHA-256. A session expires after 30 days without use; its expiry is pushed forward at most once an hour, in the same statement that resolves the request's access. Sessions are never tied to an org.
+- Sign-up is a setting, `FLEET_SIGNUP`:
+  - `invite` (default): accounts come only from invitations, the bootstrap and the setup link. Only instance admins create organizations.
+  - `open`: anyone creates an account and organizations. For the hosted service.
+- Instance admins run the installation: they create organizations in `invite` mode, list users, promote other instance admins and issue password reset links.
+- Bootstrap, while the installation has no users:
+  - With `FLEET_BOOTSTRAP_EMAIL` and `FLEET_BOOTSTRAP_PASSWORD` (or `FLEET_BOOTSTRAP_PASSWORD_HASH`, an argon2 PHC string), the first start creates that user as instance admin and an organization named `FLEET_BOOTSTRAP_ORG` (default `Default`) with the user as owner. Ignored once a user exists.
+  - Otherwise the server stores a one-time setup token and logs a link to `/setup`. That page creates the first instance admin and organization. Every instance logs the same link; it stops working once a user exists.
+- Email is optional. Without SMTP, admins copy links:
+  - Invitations are per org and email, with a role and an expiry. The link opens a page where the invitee signs in (any provider, same email) or creates a local account for that email.
+  - Password resets are links issued by instance admins only, since a user can belong to several orgs and an org admin must not take over an account used elsewhere. Using one ends the user's other sessions.
+- Each organization gets a default agent key when it is created, so its first fleet has one to use.
+- Later, for the hosted service: SMTP delivery of the same links, per-org SSO and email domain rules.
 
 ## Agent channel security
 

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { HealthData, HealthErrors, HealthResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, AddGroupMembersData, AddGroupMembersErrors, AddGroupMembersResponses, ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateFleetData, CreateFleetErrors, CreateFleetResponses, CreateGrantData, CreateGrantErrors, CreateGrantResponses, CreateGroupData, CreateGroupErrors, CreateGroupResponses, CreateInvitationData, CreateInvitationErrors, CreateInvitationResponses, CreateKeyData, CreateKeyErrors, CreateKeyResponses, CreateOrgData, CreateOrgErrors, CreateOrgResponses, CreatePasswordResetData, CreatePasswordResetErrors, CreatePasswordResetResponses, DeleteFleetData, DeleteFleetErrors, DeleteFleetResponses, DeleteGrantData, DeleteGrantErrors, DeleteGrantResponses, DeleteGroupData, DeleteGroupErrors, DeleteGroupResponses, DeleteKeyData, DeleteKeyErrors, DeleteKeyResponses, DeleteOrgData, DeleteOrgErrors, DeleteOrgResponses, GetFleetData, GetFleetErrors, GetFleetResponses, GetOrgData, GetOrgErrors, GetOrgResponses, HealthData, HealthErrors, HealthResponses, InstanceData, InstanceResponses, ListFleetsData, ListFleetsErrors, ListFleetsResponses, ListGrantsData, ListGrantsErrors, ListGrantsResponses, ListGroupMembersData, ListGroupMembersErrors, ListGroupMembersResponses, ListGroupsData, ListGroupsErrors, ListGroupsResponses, ListInvitationsData, ListInvitationsErrors, ListInvitationsResponses, ListKeysData, ListKeysErrors, ListKeysResponses, ListMembersData, ListMembersErrors, ListMembersResponses, ListOrgsData, ListOrgsErrors, ListOrgsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, MeData, MeErrors, MeResponses, PreviewInvitationData, PreviewInvitationErrors, PreviewInvitationResponses, RemoveGroupMemberData, RemoveGroupMemberErrors, RemoveGroupMemberResponses, RemoveMemberData, RemoveMemberErrors, RemoveMemberResponses, RenameGroupData, RenameGroupErrors, RenameGroupResponses, RenameKeyData, RenameKeyErrors, RenameKeyResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, ResolveData, ResolveErrors, ResolveResponses, RevokeInvitationData, RevokeInvitationErrors, RevokeInvitationResponses, SetupData, SetupErrors, SetupResponses, SignupData, SignupErrors, SignupInvitedData, SignupInvitedErrors, SignupInvitedResponses, SignupResponses, UpdateFleetData, UpdateFleetErrors, UpdateFleetResponses, UpdateGrantData, UpdateGrantErrors, UpdateGrantResponses, UpdateMeData, UpdateMeErrors, UpdateMemberData, UpdateMemberErrors, UpdateMemberResponses, UpdateMeResponses, UpdateOrgData, UpdateOrgErrors, UpdateOrgResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -16,6 +16,659 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      * used to access values that aren't defined as part of the SDK function.
      */
     meta?: Record<string, unknown>;
+};
+
+export const listUsers = <ThrowOnError extends boolean = false>(options?: Options<ListUsersData, ThrowOnError>) => {
+    return (options?.client ?? client).get<ListUsersResponses, ListUsersErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/admin/users',
+        ...options
+    });
+};
+
+export const updateUser = <ThrowOnError extends boolean = false>(options: Options<UpdateUserData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateUserResponses, UpdateUserErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/admin/users/{user_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const createPasswordReset = <ThrowOnError extends boolean = false>(options: Options<CreatePasswordResetData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreatePasswordResetResponses, CreatePasswordResetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/admin/users/{user_id}/password-reset',
+        ...options
+    });
+};
+
+export const login = <ThrowOnError extends boolean = false>(options: Options<LoginData, ThrowOnError>) => {
+    return (options.client ?? client).post<LoginResponses, LoginErrors, ThrowOnError>({
+        url: '/api/v1/auth/login',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const logout = <ThrowOnError extends boolean = false>(options?: Options<LogoutData, ThrowOnError>) => {
+    return (options?.client ?? client).post<LogoutResponses, LogoutErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/auth/logout',
+        ...options
+    });
+};
+
+export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>) => {
+    return (options.client ?? client).post<ResetPasswordResponses, ResetPasswordErrors, ThrowOnError>({
+        url: '/api/v1/auth/password-reset',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const signup = <ThrowOnError extends boolean = false>(options: Options<SignupData, ThrowOnError>) => {
+    return (options.client ?? client).post<SignupResponses, SignupErrors, ThrowOnError>({
+        url: '/api/v1/auth/signup',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteFleet = <ThrowOnError extends boolean = false>(options: Options<DeleteFleetData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteFleetResponses, DeleteFleetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}',
+        ...options
+    });
+};
+
+export const getFleet = <ThrowOnError extends boolean = false>(options: Options<GetFleetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetFleetResponses, GetFleetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}',
+        ...options
+    });
+};
+
+export const updateFleet = <ThrowOnError extends boolean = false>(options: Options<UpdateFleetData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateFleetResponses, UpdateFleetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listGrants = <ThrowOnError extends boolean = false>(options: Options<ListGrantsData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListGrantsResponses, ListGrantsErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}/grants',
+        ...options
+    });
+};
+
+export const createGrant = <ThrowOnError extends boolean = false>(options: Options<CreateGrantData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateGrantResponses, CreateGrantErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}/grants',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteGrant = <ThrowOnError extends boolean = false>(options: Options<DeleteGrantData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteGrantResponses, DeleteGrantErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}/grants/{grant_id}',
+        ...options
+    });
+};
+
+export const updateGrant = <ThrowOnError extends boolean = false>(options: Options<UpdateGrantData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateGrantResponses, UpdateGrantErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/fleets/{fleet_id}/grants/{grant_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const instance = <ThrowOnError extends boolean = false>(options?: Options<InstanceData, ThrowOnError>) => {
+    return (options?.client ?? client).get<InstanceResponses, unknown, ThrowOnError>({
+        url: '/api/v1/instance',
+        ...options
+    });
+};
+
+export const previewInvitation = <ThrowOnError extends boolean = false>(options: Options<PreviewInvitationData, ThrowOnError>) => {
+    return (options.client ?? client).get<PreviewInvitationResponses, PreviewInvitationErrors, ThrowOnError>({
+        url: '/api/v1/invitations/{token}',
+        ...options
+    });
+};
+
+export const acceptInvitation = <ThrowOnError extends boolean = false>(options: Options<AcceptInvitationData, ThrowOnError>) => {
+    return (options.client ?? client).post<AcceptInvitationResponses, AcceptInvitationErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/invitations/{token}/accept',
+        ...options
+    });
+};
+
+export const signupInvited = <ThrowOnError extends boolean = false>(options: Options<SignupInvitedData, ThrowOnError>) => {
+    return (options.client ?? client).post<SignupInvitedResponses, SignupInvitedErrors, ThrowOnError>({
+        url: '/api/v1/invitations/{token}/signup',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const me = <ThrowOnError extends boolean = false>(options?: Options<MeData, ThrowOnError>) => {
+    return (options?.client ?? client).get<MeResponses, MeErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/me',
+        ...options
+    });
+};
+
+export const updateMe = <ThrowOnError extends boolean = false>(options: Options<UpdateMeData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateMeResponses, UpdateMeErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/me',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const changePassword = <ThrowOnError extends boolean = false>(options: Options<ChangePasswordData, ThrowOnError>) => {
+    return (options.client ?? client).put<ChangePasswordResponses, ChangePasswordErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/me/password',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listOrgs = <ThrowOnError extends boolean = false>(options?: Options<ListOrgsData, ThrowOnError>) => {
+    return (options?.client ?? client).get<ListOrgsResponses, ListOrgsErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs',
+        ...options
+    });
+};
+
+export const createOrg = <ThrowOnError extends boolean = false>(options: Options<CreateOrgData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateOrgResponses, CreateOrgErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteOrg = <ThrowOnError extends boolean = false>(options: Options<DeleteOrgData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteOrgResponses, DeleteOrgErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}',
+        ...options
+    });
+};
+
+export const getOrg = <ThrowOnError extends boolean = false>(options: Options<GetOrgData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetOrgResponses, GetOrgErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}',
+        ...options
+    });
+};
+
+export const updateOrg = <ThrowOnError extends boolean = false>(options: Options<UpdateOrgData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateOrgResponses, UpdateOrgErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listKeys = <ThrowOnError extends boolean = false>(options: Options<ListKeysData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListKeysResponses, ListKeysErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/agent-keys',
+        ...options
+    });
+};
+
+export const createKey = <ThrowOnError extends boolean = false>(options: Options<CreateKeyData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateKeyResponses, CreateKeyErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/agent-keys',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteKey = <ThrowOnError extends boolean = false>(options: Options<DeleteKeyData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteKeyResponses, DeleteKeyErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/agent-keys/{key_id}',
+        ...options
+    });
+};
+
+export const renameKey = <ThrowOnError extends boolean = false>(options: Options<RenameKeyData, ThrowOnError>) => {
+    return (options.client ?? client).patch<RenameKeyResponses, RenameKeyErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/agent-keys/{key_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listFleets = <ThrowOnError extends boolean = false>(options: Options<ListFleetsData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListFleetsResponses, ListFleetsErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/fleets',
+        ...options
+    });
+};
+
+export const createFleet = <ThrowOnError extends boolean = false>(options: Options<CreateFleetData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateFleetResponses, CreateFleetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/fleets',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listGroups = <ThrowOnError extends boolean = false>(options: Options<ListGroupsData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListGroupsResponses, ListGroupsErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups',
+        ...options
+    });
+};
+
+export const createGroup = <ThrowOnError extends boolean = false>(options: Options<CreateGroupData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateGroupResponses, CreateGroupErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteGroup = <ThrowOnError extends boolean = false>(options: Options<DeleteGroupData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteGroupResponses, DeleteGroupErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups/{group_id}',
+        ...options
+    });
+};
+
+export const renameGroup = <ThrowOnError extends boolean = false>(options: Options<RenameGroupData, ThrowOnError>) => {
+    return (options.client ?? client).patch<RenameGroupResponses, RenameGroupErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups/{group_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const listGroupMembers = <ThrowOnError extends boolean = false>(options: Options<ListGroupMembersData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListGroupMembersResponses, ListGroupMembersErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups/{group_id}/members',
+        ...options
+    });
+};
+
+export const addGroupMembers = <ThrowOnError extends boolean = false>(options: Options<AddGroupMembersData, ThrowOnError>) => {
+    return (options.client ?? client).post<AddGroupMembersResponses, AddGroupMembersErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups/{group_id}/members',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const removeGroupMember = <ThrowOnError extends boolean = false>(options: Options<RemoveGroupMemberData, ThrowOnError>) => {
+    return (options.client ?? client).delete<RemoveGroupMemberResponses, RemoveGroupMemberErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/groups/{group_id}/members/{user_id}',
+        ...options
+    });
+};
+
+export const listInvitations = <ThrowOnError extends boolean = false>(options: Options<ListInvitationsData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListInvitationsResponses, ListInvitationsErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/invitations',
+        ...options
+    });
+};
+
+export const createInvitation = <ThrowOnError extends boolean = false>(options: Options<CreateInvitationData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateInvitationResponses, CreateInvitationErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/invitations',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const revokeInvitation = <ThrowOnError extends boolean = false>(options: Options<RevokeInvitationData, ThrowOnError>) => {
+    return (options.client ?? client).delete<RevokeInvitationResponses, RevokeInvitationErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/invitations/{invitation_id}',
+        ...options
+    });
+};
+
+export const listMembers = <ThrowOnError extends boolean = false>(options: Options<ListMembersData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListMembersResponses, ListMembersErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/members',
+        ...options
+    });
+};
+
+export const removeMember = <ThrowOnError extends boolean = false>(options: Options<RemoveMemberData, ThrowOnError>) => {
+    return (options.client ?? client).delete<RemoveMemberResponses, RemoveMemberErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/members/{user_id}',
+        ...options
+    });
+};
+
+export const updateMember = <ThrowOnError extends boolean = false>(options: Options<UpdateMemberData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateMemberResponses, UpdateMemberErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/orgs/{org_id}/members/{user_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const resolve = <ThrowOnError extends boolean = false>(options: Options<ResolveData, ThrowOnError>) => {
+    return (options.client ?? client).get<ResolveResponses, ResolveErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/api/v1/resolve',
+        ...options
+    });
+};
+
+export const setup = <ThrowOnError extends boolean = false>(options: Options<SetupData, ThrowOnError>) => {
+    return (options.client ?? client).post<SetupResponses, SetupErrors, ThrowOnError>({
+        url: '/api/v1/setup',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
 };
 
 export const health = <ThrowOnError extends boolean = false>(options?: Options<HealthData, ThrowOnError>) => {

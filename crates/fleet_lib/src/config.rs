@@ -3,6 +3,10 @@ use std::path::PathBuf;
 use thiserror::Error;
 use url::Url;
 
+use crate::auth::{MIN_PASSWORD_LEN, hash_password, is_password_hash};
+use crate::keys::MasterKey;
+use crate::model::Signup;
+
 const DEFAULT_BIND: &str = "0.0.0.0:3000";
 const DEFAULT_DB_MAX_CONNECTIONS: u32 = 10;
 
@@ -16,6 +20,12 @@ pub enum ConfigError {
         expected: &'static str,
         value: String,
     },
+    #[error("{0}: {1}")]
+    Unusable(&'static str, &'static str),
+    #[error("set only one of {0} and {1}")]
+    Both(&'static str, &'static str),
+    #[error("{0} needs {1}")]
+    Requires(&'static str, &'static str),
 }
 
 #[derive(Clone)]
@@ -46,6 +56,16 @@ pub struct Config {
     pub app_url: String,
     pub cors_origins: Vec<String>,
     pub web_dir: Option<PathBuf>,
+    pub signup: Signup,
+    pub master_key: MasterKey,
+    pub bootstrap: Option<Bootstrap>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Bootstrap {
+    pub email: String,
+    pub password_hash: Secret,
+    pub org_name: String,
 }
 
 impl Config {
@@ -84,7 +104,61 @@ impl Config {
             app_url,
             cors_origins,
             web_dir: var("FLEET_WEB_DIR").map(PathBuf::from),
+            signup: parse_signup(var("FLEET_SIGNUP"))?,
+            master_key: MasterKey::parse(&required("FLEET_MASTER_KEY")?)
+                .map_err(|error| ConfigError::Unusable("FLEET_MASTER_KEY", error.as_str()))?,
+            bootstrap: parse_bootstrap(&var)?,
         })
+    }
+}
+
+fn parse_signup(raw: Option<String>) -> Result<Signup, ConfigError> {
+    match raw.as_deref().map(str::to_ascii_lowercase).as_deref() {
+        None | Some("invite") => Ok(Signup::Invite),
+        Some("open") => Ok(Signup::Open),
+        Some(_) => Err(ConfigError::Invalid {
+            name: "FLEET_SIGNUP",
+            expected: "sign-up mode, invite or open",
+            value: raw.unwrap_or_default(),
+        }),
+    }
+}
+
+fn parse_bootstrap(
+    var: &impl Fn(&str) -> Option<String>,
+) -> Result<Option<Bootstrap>, ConfigError> {
+    const EMAIL: &str = "FLEET_BOOTSTRAP_EMAIL";
+    const PASSWORD: &str = "FLEET_BOOTSTRAP_PASSWORD";
+    const HASH: &str = "FLEET_BOOTSTRAP_PASSWORD_HASH";
+    let password_hash = match (var(PASSWORD), var(HASH)) {
+        (Some(_), Some(_)) => return Err(ConfigError::Both(PASSWORD, HASH)),
+        (Some(password), None) if password.chars().count() < MIN_PASSWORD_LEN => {
+            return Err(ConfigError::Unusable(
+                PASSWORD,
+                "must be at least 10 characters",
+            ));
+        }
+        (Some(password), None) => Some(hash_password(&password)),
+        (None, Some(hash)) if !is_password_hash(&hash) => {
+            return Err(ConfigError::Unusable(HASH, "must be an argon2 PHC string"));
+        }
+        (None, Some(hash)) => Some(hash),
+        (None, None) => None,
+    };
+    match (var(EMAIL), password_hash) {
+        (None, None) => Ok(None),
+        (Some(_), None) => Err(ConfigError::Requires(EMAIL, PASSWORD)),
+        (None, Some(_)) => Err(ConfigError::Requires(PASSWORD, EMAIL)),
+        (Some(email), Some(hash)) if email.contains('@') => Ok(Some(Bootstrap {
+            email,
+            password_hash: Secret::new(hash),
+            org_name: var("FLEET_BOOTSTRAP_ORG").unwrap_or_else(|| "Default".to_string()),
+        })),
+        (Some(email), Some(_)) => Err(ConfigError::Invalid {
+            name: EMAIL,
+            expected: "email address",
+            value: email,
+        }),
     }
 }
 
@@ -145,6 +219,8 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
+    const MASTER_KEY: &str = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+
     fn config(vars: &[(&str, &str)]) -> Result<Config, ConfigError> {
         let vars: HashMap<String, String> = vars
             .iter()
@@ -158,8 +234,11 @@ mod tests {
         let config = config(&[
             ("DATABASE_URL", "postgres://localhost/fleet"),
             ("FLEET_APP_URL", "http://localhost:5173"),
+            ("FLEET_MASTER_KEY", MASTER_KEY),
         ])
         .unwrap();
+        assert_eq!(config.signup, Signup::Invite);
+        assert!(config.bootstrap.is_none());
         assert_eq!(config.bind, DEFAULT_BIND);
         assert_eq!(config.db_max_connections, DEFAULT_DB_MAX_CONNECTIONS);
         assert!(config.auto_migrate);
@@ -191,5 +270,50 @@ mod tests {
         assert_eq!(parse_positive("X", Some("4".into()), 1).unwrap(), 4);
         assert!(!parse_bool("X", Some("FALSE".into()), true).unwrap());
         assert!(parse_bool("X", Some("maybe".into()), true).is_err());
+    }
+
+    #[test]
+    fn bootstrap_needs_an_email_and_exactly_one_password() {
+        let base = [
+            ("DATABASE_URL", "postgres://localhost/fleet"),
+            ("FLEET_APP_URL", "http://localhost:5173"),
+            ("FLEET_MASTER_KEY", MASTER_KEY),
+        ];
+        let with = |extra: &[(&'static str, &'static str)]| {
+            let mut vars = base.to_vec();
+            vars.extend_from_slice(extra);
+            config(&vars)
+        };
+        let bootstrap = with(&[
+            ("FLEET_BOOTSTRAP_EMAIL", "admin@example.com"),
+            ("FLEET_BOOTSTRAP_PASSWORD", "a long enough password"),
+        ])
+        .unwrap()
+        .bootstrap
+        .unwrap();
+        assert!(is_password_hash(bootstrap.password_hash.expose()));
+        assert_eq!(bootstrap.org_name, "Default");
+        assert_eq!(
+            with(&[("FLEET_BOOTSTRAP_EMAIL", "admin@example.com")]).unwrap_err(),
+            ConfigError::Requires("FLEET_BOOTSTRAP_EMAIL", "FLEET_BOOTSTRAP_PASSWORD")
+        );
+        assert!(matches!(
+            with(&[
+                ("FLEET_BOOTSTRAP_EMAIL", "admin@example.com"),
+                ("FLEET_BOOTSTRAP_PASSWORD", "a long enough password"),
+                (
+                    "FLEET_BOOTSTRAP_PASSWORD_HASH",
+                    "$argon2id$v=19$m=19456,t=2,p=1$c2FsdHNhbHQ$aGFzaA"
+                ),
+            ]),
+            Err(ConfigError::Both(_, _))
+        ));
+        assert!(matches!(
+            with(&[("FLEET_SIGNUP", "sometimes")]),
+            Err(ConfigError::Invalid {
+                name: "FLEET_SIGNUP",
+                ..
+            })
+        ));
     }
 }
